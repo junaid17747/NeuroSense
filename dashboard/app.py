@@ -14,11 +14,13 @@ sys.path.append(str(SRC_PATH))
 
 from acquisition.eeg_reader import EEGReader
 from acquisition.heart_rate_reader import HeartRateReader
+from acquisition.motion_reader import MotionReader
 from preprocessing.eeg_filter import bandpass_filter
 from features.eeg_features import (
     extract_eeg_features,
     calculate_attention_index
 )
+from features.sensor_fusion import calculate_fusion_score, fusion_state
 from features.sensor_features import (
     attention_score,
     attention_state
@@ -44,9 +46,11 @@ st.caption(
 
 eeg_sensor = EEGReader()
 heart_sensor = HeartRateReader()
+motion_sensor = MotionReader()
 
 time, raw_eeg = eeg_sensor.generate_eeg()
 heart_rate = heart_sensor.read_heart_rate()
+motion_level = motion_sensor.read_motion()
 
 filtered_eeg = bandpass_filter(raw_eeg)
 
@@ -55,13 +59,20 @@ features = extract_eeg_features(filtered_eeg)
 attention_index = calculate_attention_index(features)
 
 score = attention_score(attention_index)
+
+fusion_score = calculate_fusion_score(
+    score,
+    heart_rate,
+    motion_level
+)
+state = fusion_state(fusion_score)
 state = attention_state(score)
 
 # -----------------------------
 # Main Metrics
 # -----------------------------
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric(
@@ -71,11 +82,17 @@ with col1:
 
 with col2:
     st.metric(
-        label="🧠 Attention Score",
-        value=f"{score}/100"
+        label="🏃 Motion Level",
+        value=f"{motion_level:.2f}"
     )
 
 with col3:
+    st.metric(
+        label="🧠 Attention Score",
+        value=f"{fusion_score}/100"
+    )
+
+with col4:
     st.metric(
         label="🎯 Attention State",
         value=state
@@ -130,7 +147,7 @@ st.write(
 )
 
 st.progress(
-    min(int(score), 100)
+    min(int(fusion_score), 100)
 )
 
 if state == "Focused":
