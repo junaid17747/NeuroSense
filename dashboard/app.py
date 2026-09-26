@@ -13,6 +13,7 @@ SRC_PATH = PROJECT_ROOT / "src"
 sys.path.append(str(SRC_PATH))
 
 from acquisition.eeg_reader import EEGReader
+from storage.data_logger import log_reading
 from acquisition.heart_rate_reader import HeartRateReader
 from acquisition.motion_reader import MotionReader
 from preprocessing.eeg_filter import bandpass_filter
@@ -66,6 +67,30 @@ fusion_score = calculate_fusion_score(
     motion_level
 )
 state = fusion_state(fusion_score)
+
+# -----------------------------
+# Live History + Data Logging
+# -----------------------------
+
+log_reading(
+    heart_rate,
+    motion_level,
+    score,
+    fusion_score,
+    state
+)
+
+if "attention_history" not in st.session_state:
+    st.session_state.attention_history = []
+
+st.session_state.attention_history.append({
+    "Attention Score": fusion_score,
+    "Heart Rate": heart_rate,
+    "Motion Level": motion_level
+})
+
+# Keep only latest 30 readings
+st.session_state.attention_history = st.session_state.attention_history[-30:]
 state = attention_state(score)
 
 # -----------------------------
@@ -158,6 +183,20 @@ elif state == "Moderate":
 
 else:
     st.error("Distracted")
+
+
+# -----------------------------
+# Attention History
+# -----------------------------
+
+st.subheader("Live Attention History")
+
+history_df = pd.DataFrame(st.session_state.attention_history)
+
+if not history_df.empty:
+    st.line_chart(history_df[["Attention Score"]])
+
+st.caption("Displaying the latest 30 attention readings.")
 
 st.info(
     "This is an experimental academic prototype and is not intended "
