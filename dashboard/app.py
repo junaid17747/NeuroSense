@@ -24,6 +24,7 @@ from features.eeg_features import (
 )
 from features.sensor_fusion import calculate_fusion_score, fusion_state
 from model.predict import predict_attention
+from model.calibrated_predict import predict_calibrated
 from features.sensor_features import (
     attention_score,
     attention_state
@@ -81,6 +82,39 @@ ml_prediction, ml_confidence = predict_attention(
     features["beta"],
     heart_rate,
     motion_level
+)
+
+calibrated_result = predict_calibrated(
+    features["theta"],
+    features["alpha"],
+    features["beta"],
+    heart_rate,
+    motion_level
+)
+
+calibrated_state = calibrated_result["state"]
+calibrated_confidence = calibrated_result["confidence"]
+raw_calibrated_score = calibrated_result["score"]
+
+p_focused = calibrated_result["focused_probability"]
+p_neutral = calibrated_result["neutral_probability"]
+p_distracted = calibrated_result["distracted_probability"]
+
+# Exponential moving average smoothing
+if "smoothed_attention_score" not in st.session_state:
+    st.session_state.smoothed_attention_score = raw_calibrated_score
+
+alpha_smooth = 0.35
+
+st.session_state.smoothed_attention_score = (
+    alpha_smooth * raw_calibrated_score
+    + (1 - alpha_smooth)
+    * st.session_state.smoothed_attention_score
+)
+
+calibrated_score = round(
+    st.session_state.smoothed_attention_score,
+    1
 )
 
 # -----------------------------
@@ -220,6 +254,56 @@ with ml_col2:
         "📊 ML Confidence",
         f"{ml_confidence}%"
     )
+
+
+# -----------------------------
+# Calibrated XGBoost Analysis
+# -----------------------------
+
+st.subheader("Calibrated XGBoost Attention Analysis")
+
+cal1, cal2, cal3 = st.columns(3)
+
+with cal1:
+    st.metric(
+        "🧠 Calibrated Attention Score",
+        f"{calibrated_score}/100"
+    )
+
+with cal2:
+    st.metric(
+        "🎯 Calibrated State",
+        calibrated_state
+    )
+
+with cal3:
+    st.metric(
+        "📊 Confidence",
+        f"{calibrated_confidence}%"
+    )
+
+probability_df = pd.DataFrame({
+    "State": [
+        "Focused",
+        "Neutral",
+        "Distracted"
+    ],
+    "Probability": [
+        p_focused,
+        p_neutral,
+        p_distracted
+    ]
+})
+
+st.bar_chart(
+    probability_df.set_index("State")
+)
+
+st.caption(
+    "Attention score = 100 × "
+    "[P(Focused) + 0.5 × P(Neutral)]. "
+    "Displayed score is smoothed across readings."
+)
 
 # -----------------------------
 # Attention History
