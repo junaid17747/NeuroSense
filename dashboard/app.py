@@ -22,6 +22,7 @@ from features.eeg_features import (
     calculate_attention_index
 )
 from features.sensor_fusion import calculate_fusion_score, fusion_state
+from model.predict import predict_attention
 from features.sensor_features import (
     attention_score,
     attention_state
@@ -67,6 +68,14 @@ fusion_score = calculate_fusion_score(
     motion_level
 )
 state = fusion_state(fusion_score)
+
+ml_prediction, ml_confidence = predict_attention(
+    features["theta"],
+    features["alpha"],
+    features["beta"],
+    heart_rate,
+    motion_level
+)
 
 # -----------------------------
 # Live History + Data Logging
@@ -184,6 +193,27 @@ elif state == "Moderate":
 else:
     st.error("Distracted")
 
+
+
+# -----------------------------
+# Machine Learning Prediction
+# -----------------------------
+
+st.subheader("Machine Learning Analysis")
+
+ml_col1, ml_col2 = st.columns(2)
+
+with ml_col1:
+    st.metric(
+        "🤖 ML Prediction",
+        ml_prediction
+    )
+
+with ml_col2:
+    st.metric(
+        "📊 ML Confidence",
+        f"{ml_confidence}%"
+    )
 
 # -----------------------------
 # Attention History
