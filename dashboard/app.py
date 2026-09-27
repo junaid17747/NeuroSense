@@ -23,6 +23,7 @@ from features.eeg_features import (
     calculate_attention_index
 )
 from features.sensor_fusion import calculate_fusion_score, fusion_state
+from features.signal_quality import evaluate_eeg_quality, evaluate_aux_quality, overall_signal_status
 from model.predict import predict_attention
 from model.calibrated_predict import predict_calibrated
 from model.shap_explainer import explain_prediction
@@ -59,6 +60,18 @@ raw_eeg = sensor_data["eeg"]
 heart_rate = sensor_data["heart_rate"]
 motion_level = sensor_data["motion_level"]
 sensor_mode = sensor_data["mode"]
+
+eeg_quality = evaluate_eeg_quality(raw_eeg)
+
+aux_quality = evaluate_aux_quality(
+    heart_rate,
+    motion_level
+)
+
+signal_status = overall_signal_status(
+    eeg_quality,
+    aux_quality
+)
 
 st.caption(f"Sensor Mode: {sensor_mode.upper()}")
 
@@ -182,6 +195,39 @@ with col4:
     )
 
 st.divider()
+
+
+# -----------------------------
+# Sensor Health
+# -----------------------------
+
+st.subheader("Sensor Health")
+
+q1, q2, q3 = st.columns(3)
+
+with q1:
+    st.metric(
+        "EEG Quality",
+        f"{eeg_quality['quality'] * 100:.0f}%"
+    )
+
+with q2:
+    st.metric(
+        "EEG Status",
+        eeg_quality["status"]
+    )
+
+with q3:
+    st.metric(
+        "Overall Signal",
+        signal_status["status"]
+    )
+
+if not signal_status["allow_prediction"]:
+    st.error(
+        "Insufficient signal quality. "
+        "Prediction should not be trusted."
+    )
 
 # -----------------------------
 # EEG Graph
