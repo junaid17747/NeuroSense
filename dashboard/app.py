@@ -16,6 +16,7 @@ from acquisition.eeg_reader import EEGReader
 from storage.data_logger import log_reading
 from acquisition.heart_rate_reader import HeartRateReader
 from acquisition.motion_reader import MotionReader
+from acquisition.unified_sensor_manager import UnifiedSensorManager
 from preprocessing.eeg_filter import bandpass_filter
 from features.eeg_features import (
     extract_eeg_features,
@@ -39,20 +40,25 @@ st.title("🧠 NeuroSense")
 st.subheader("Multi-Sensor Brain Attention Monitoring System")
 
 st.caption(
-    "Prototype attention monitoring using simulated EEG and heart-rate data."
+    "Prototype attention monitoring using EEG, heart-rate and motion data."
 )
+
 
 # -----------------------------
 # Generate Sensor Data
 # -----------------------------
 
-eeg_sensor = EEGReader()
-heart_sensor = HeartRateReader()
-motion_sensor = MotionReader()
 
-time, raw_eeg = eeg_sensor.generate_eeg()
-heart_rate = heart_sensor.read_heart_rate()
-motion_level = motion_sensor.read_motion()
+sensor_manager = UnifiedSensorManager()
+sensor_data = sensor_manager.read_all()
+
+time_axis = sensor_data["time"]
+raw_eeg = sensor_data["eeg"]
+heart_rate = sensor_data["heart_rate"]
+motion_level = sensor_data["motion_level"]
+sensor_mode = sensor_data["mode"]
+
+st.caption(f"Sensor Mode: {sensor_mode.upper()}")
 
 filtered_eeg = bandpass_filter(raw_eeg)
 
@@ -141,7 +147,7 @@ st.divider()
 st.subheader("Live EEG Signal")
 
 eeg_dataframe = pd.DataFrame({
-    "Time": time,
+    "Time": time_axis,
     "Raw EEG": raw_eeg,
     "Filtered EEG": filtered_eeg
 })

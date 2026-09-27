@@ -9,3 +9,15 @@ nohup: ignoring input
   Help agents write better Streamlit apps?
   Install the official Streamlit skills by running streamlit skills in your terminal.
 
+2026-09-27 14:25:44.720 Uncaught app execution
+Traceback (most recent call last):
+  File "/home/yahyasiddiqui/Neurosense Mini Project/NeuroSense/.venv/lib/python3.12/site-packages/streamlit/runtime/scriptrunner/exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "/home/yahyasiddiqui/Neurosense Mini Project/NeuroSense/.venv/lib/python3.12/site-packages/streamlit/runtime/scriptrunner/script_runner.py", line 909, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yahyasiddiqui/Neurosense Mini Project/NeuroSense/dashboard/app.py", line 46, in <module>
+    st.caption(f"Sensor Mode: {sensor_mode.upper()}")
+                               ^^^^^^^^^^^
+NameError: name 'sensor_mode' is not defined
