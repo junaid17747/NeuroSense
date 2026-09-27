@@ -25,6 +25,7 @@ from features.eeg_features import (
 from features.sensor_fusion import calculate_fusion_score, fusion_state
 from model.predict import predict_attention
 from model.calibrated_predict import predict_calibrated
+from model.shap_explainer import explain_prediction
 from features.sensor_features import (
     attention_score,
     attention_state
@@ -85,6 +86,14 @@ ml_prediction, ml_confidence = predict_attention(
 )
 
 calibrated_result = predict_calibrated(
+    features["theta"],
+    features["alpha"],
+    features["beta"],
+    heart_rate,
+    motion_level
+)
+
+shap_prediction, shap_explanation = explain_prediction(
     features["theta"],
     features["alpha"],
     features["beta"],
@@ -304,6 +313,45 @@ st.caption(
     "[P(Focused) + 0.5 × P(Neutral)]. "
     "Displayed score is smoothed across readings."
 )
+
+
+# -----------------------------
+# SHAP Explainability
+# -----------------------------
+
+st.subheader("Why This Prediction?")
+
+st.caption(
+    f"SHAP explanation for current XGBoost prediction: {shap_prediction}"
+)
+
+shap_df = pd.DataFrame(shap_explanation[:5])
+
+if not shap_df.empty:
+    shap_df["absolute_impact"] = shap_df["impact"].abs()
+    shap_df = shap_df.sort_values(
+        "absolute_impact",
+        ascending=False
+    )
+
+    st.bar_chart(
+        shap_df.set_index("feature")[["impact"]]
+    )
+
+    st.write("Top contributing features:")
+
+    for _, row in shap_df.iterrows():
+        direction = (
+            "increased"
+            if row["impact"] > 0
+            else "decreased"
+        )
+
+        st.write(
+            f"• {row['feature']}: "
+            f"{direction} support for the predicted class "
+            f"(SHAP impact {row['impact']:.4f})"
+        )
 
 # -----------------------------
 # Attention History
