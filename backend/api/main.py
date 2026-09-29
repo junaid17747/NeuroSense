@@ -9,6 +9,7 @@ SRC_PATH = PROJECT_ROOT / "src"
 sys.path.insert(0, str(SRC_PATH))
 
 from backend.services.ml_service import ml_service
+from backend.schemas.sensor import SensorPacket
 
 
 app = FastAPI(
@@ -85,14 +86,8 @@ def predict(request: PredictionRequest):
         )
 
 
-class SensorPredictionRequest(BaseModel):
-    eeg: list[float]
-    heart_rate: float = Field(gt=0)
-    motion_level: float = Field(ge=0, le=1)
-
-
 @app.post("/predict-sensor")
-def predict_sensor(request: SensorPredictionRequest):
+def predict_sensor(request: SensorPacket):
     try:
         from backend.services.sensor_inference_service import (
             sensor_inference_service
