@@ -59,7 +59,15 @@ if "sensor_manager" not in st.session_state:
 sensor_manager = st.session_state.sensor_manager
 sensor_data = sensor_manager.read_all()
 
+# Maintain rolling EEG history across reruns
+if "eeg_history" not in st.session_state:
+    st.session_state.eeg_history = []
 
+st.session_state.eeg_history.extend(sensor_data["eeg"].tolist())
+
+# Keep latest ~10 seconds assuming 256 Hz
+MAX_EEG_SAMPLES = 2560
+st.session_state.eeg_history = st.session_state.eeg_history[-MAX_EEG_SAMPLES:]
 
 time_axis = sensor_data["time"]
 raw_eeg = sensor_data["eeg"]
@@ -241,12 +249,21 @@ if not signal_status["allow_prediction"]:
 
 st.subheader("Live EEG Signal")
 
-# UnifiedSensorManager already provides the blueprint-aligned
-# 4-second EEG window (1024 samples at 256 Hz).
+rolling_raw_eeg = st.session_state.eeg_history
+
+rolling_time = [
+    i / 256.0
+    for i in range(len(rolling_raw_eeg))
+]
+
+rolling_filtered_eeg = bandpass_filter(
+    rolling_raw_eeg
+)
+
 eeg_dataframe = pd.DataFrame({
-    "Time": time_axis,
-    "Raw EEG": raw_eeg,
-    "Filtered EEG": filtered_eeg
+    "Time": rolling_time,
+    "Raw EEG": rolling_raw_eeg,
+    "Filtered EEG": rolling_filtered_eeg
 })
 
 st.line_chart(
