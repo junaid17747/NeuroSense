@@ -28,3 +28,6 @@ data/raw/*
 !data/raw/.gitkeep
 # Local backup files
 *.backup
+
+# Large generated synthetic datasets
+data/processed/neurosense_synthetic_1m.csv
