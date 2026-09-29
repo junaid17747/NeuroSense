@@ -83,3 +83,35 @@ def predict(request: PredictionRequest):
             status_code=500,
             detail=f"Prediction failed: {exc}"
         )
+
+
+class SensorPredictionRequest(BaseModel):
+    eeg: list[float]
+    heart_rate: float = Field(gt=0)
+    motion_level: float = Field(ge=0, le=1)
+
+
+@app.post("/predict-sensor")
+def predict_sensor(request: SensorPredictionRequest):
+    try:
+        from backend.services.sensor_inference_service import (
+            sensor_inference_service
+        )
+
+        return sensor_inference_service.predict_from_sensor(
+            eeg=request.eeg,
+            heart_rate=request.heart_rate,
+            motion_level=request.motion_level,
+        )
+
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail=str(exc)
+        )
+
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Sensor prediction failed: {exc}"
+        )
