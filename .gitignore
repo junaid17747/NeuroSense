@@ -34,3 +34,6 @@ data/processed/neurosense_synthetic_1m.csv
 
 # Runtime data
 data/logs/*.csv
+
+# Local NeuroSense database
+data/database/*.db

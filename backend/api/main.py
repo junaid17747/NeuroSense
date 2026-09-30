@@ -42,6 +42,8 @@ class PredictionResponse(BaseModel):
     distracted_probability: float
 
 
+from backend.storage.repository import save_sensor_record
+
 @app.get("/")
 def root():
     return {
@@ -93,11 +95,16 @@ def predict_sensor(request: SensorPacket):
             sensor_inference_service
         )
 
-        return sensor_inference_service.predict_from_sensor(
+        result = sensor_inference_service.predict_from_sensor(
             eeg=request.eeg,
             heart_rate=request.heart_rate,
             motion_level=request.motion_level,
         )
+
+        record_id = save_sensor_record(request, result)
+        result["record_id"] = record_id
+
+        return result
 
     except ValueError as exc:
         raise HTTPException(
