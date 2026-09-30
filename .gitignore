@@ -31,3 +31,6 @@ data/raw/*
 
 # Large generated synthetic datasets
 data/processed/neurosense_synthetic_1m.csv
+
+# Runtime data
+data/logs/*.csv
