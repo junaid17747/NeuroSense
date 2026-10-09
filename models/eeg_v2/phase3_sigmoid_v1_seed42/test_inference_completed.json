@@ -1,0 +1,9 @@
+{
+  "calibrated_test_predict_calls": 1,
+  "completed_at_utc": "2026-10-09T07:21:54.686952+00:00",
+  "freeze_record_sha256": "f2c435c7f361ab9ec57c04b32c8dc1868e983eed2544a03defd7ac33f6596a07",
+  "predictions_sha256": "3df4d2f4ede37922924f2287f248b4a1a616de4459ac1cff146b3635a367952d",
+  "test_rows": 100000,
+  "test_subjects": 100,
+  "uncalibrated_test_predict_calls": 1
+}

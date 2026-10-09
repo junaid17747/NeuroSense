@@ -1,0 +1,77 @@
+{
+  "benchmark": "synthetic EEG feature-space",
+  "dataset": {
+    "path": "data/processed/neurosense_eeg_v2_synthetic_1m.csv",
+    "sha256": "6c36f1bf2c1a6a6d4ee133d9a1aac0e0ec2324bc2a79bdec65347bbf3ad4f99d",
+    "size_bytes": 397983105
+  },
+  "environment": {
+    "joblib": "1.6.0",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12.3",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "known_inconsistencies": {
+    "dataset_modified": false,
+    "kurtosis": "6928 values are below -2; 6791 are below the unbiased Fisher lower bound -2.0039177277179236 for 1024-sample windows. Generator clips at -2.5.",
+    "phase1_measured_counts": {
+      "alpha_beta_ratio_mismatch": 0,
+      "hjorth_activity_variance_exact_duplicates": 1000000,
+      "hjorth_activity_variance_mismatch": 0,
+      "kurtosis_below_minus_two": 6928,
+      "kurtosis_below_unbiased_1024_sample_bound": 6791,
+      "negative_non_kurtosis_features": 0,
+      "relative_power_formula_mismatch": 0,
+      "relative_power_outside_unit_interval": 0,
+      "relative_power_sum_mismatch": 0,
+      "rms_squared_below_variance": 500045,
+      "theta_beta_ratio_mismatch": 0
+    },
+    "power_scale": {
+      "description": "Generator sets variance to pre-noise summed band power times lognormal(4.5, 0.25), a median multiplier near 90, then perturbs spectral powers without rescaling variance. Absolute spectral/time-domain powers therefore lack a shared raw-signal-derived scale. Summed 1-40 Hz bands need not exactly equal raw variance, but this arbitrary synthetic multiplier is not a validated physical scaling.",
+      "variance_over_stored_band_sum": {
+        "max": 283.0766624594613,
+        "mean": 92.88611950457219,
+        "median": 90.03650468167166,
+        "min": 25.06966756333556
+      }
+    },
+    "raw_windows": "No corresponding raw EEG windows are available to validate physical equivalence.",
+    "rms_variance": "RMS squared must equal variance plus mean squared for one signal window; independent synthetic RMS noise violates this in 500045 rows."
+  },
+  "limitation": "Synthetic EEG feature-space benchmark results only. No clinical validity, real-world attention detection performance, or raw-EEG pipeline validity is established. Synthetic RMS/variance, kurtosis and absolute power-scale inconsistencies are preserved. The test results are final descriptive estimates, not inputs to further tuning.",
+  "manifest": {
+    "path": "reports/eeg_v2_phase1/split_manifest.json",
+    "sha256": "2a427ef2895b9d19c4b297186ce1e8f404337fd6691e5f48c24a5c29b3cf4c29",
+    "size_bytes": 19230
+  },
+  "phase1_audit": {
+    "path": "reports/eeg_v2_phase1/dataset_audit.json",
+    "sha256": "c9e6f0cc2a178df5b8420b0b392db6e235dc4a61bc74bf8f0808e8f10785f83b",
+    "size_bytes": 11035
+  },
+  "phase2_model": {
+    "path": "models/eeg_v2/phase2_seed42/xgboost.ubj",
+    "sha256": "315b603ae4ca56d3d76305337328a548af738aa4f78f65dfe609b65ba1cf6172",
+    "size_bytes": 2331071
+  },
+  "phase2_training_report": {
+    "path": "models/eeg_v2/phase2_seed42/training_report.json",
+    "sha256": "80fa9174bfceea029db56ffd627a720a11dfe6f2121dfd72284fd6040a16521b",
+    "size_bytes": 7711
+  },
+  "source_fingerprints": [
+    {
+      "path": "src/model/calibrate_eeg_v2_phase3.py",
+      "sha256": "4beca8b9ef08f9a611a64b46ccf115a13ed0c7fcaf7304ebcbff3ca3534d9c00",
+      "size_bytes": 23803
+    },
+    {
+      "path": "src/model/eeg_v2_evaluation.py",
+      "sha256": "1471a423028fa27ad43e013ad71c162bf66a9f50b42f8ff2599bc20f0e6507b1",
+      "size_bytes": 9185
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "base_retrained": false,
+  "bootstrap": {
+    "confidence_level": 0.95,
+    "paired": true,
+    "replicates": 2000,
+    "seed": 42,
+    "unit": "subject"
+  },
+  "brier_score": "mean over windows of sum over 3 classes (p_k - 1[y=k])^2; unscaled range [0,2]",
+  "class_order": [
+    "Distracted",
+    "Focused",
+    "Neutral"
+  ],
+  "cv": 5,
+  "cv_note": "Frozen base predictions only; all folds are within calibration rows, every base fit is a no-op, and one sigmoid per class is fitted using all calibration rows.",
+  "ensemble": false,
+  "estimator": "CalibratedClassifierCV(FrozenEstimator(Phase2 XGBClassifier))",
+  "excluded_fit_partitions": [
+    "train",
+    "validation",
+    "test"
+  ],
+  "feature_order": [
+    "delta_power",
+    "theta_power",
+    "alpha_power",
+    "beta_power",
+    "low_gamma_power",
+    "relative_delta",
+    "relative_theta",
+    "relative_alpha",
+    "relative_beta",
+    "relative_low_gamma",
+    "theta_beta_ratio",
+    "alpha_beta_ratio",
+    "spectral_entropy",
+    "hjorth_activity",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "rms",
+    "variance",
+    "kurtosis",
+    "line_length"
+  ],
+  "fit_partition": "calibration",
+  "fit_rows": 100000,
+  "fit_subjects": 100,
+  "fitted_sigmoid_parameters": [
+    {
+      "a": -5.00672469004023,
+      "b": 2.476891300620678,
+      "class": "Distracted"
+    },
+    {
+      "a": -4.9802720670316605,
+      "b": 2.4925569015878497,
+      "class": "Focused"
+    },
+    {
+      "a": -4.957684162273463,
+      "b": 2.377847151702991,
+      "class": "Neutral"
+    }
+  ],
+  "hyperparameter_search": false,
+  "log_loss": {
+    "clipping": "[epsilon, 1-epsilon], then row normalization",
+    "dtype": "float64",
+    "epsilon": 2.220446049250313e-16,
+    "natural_log": true
+  },
+  "majority_baseline": {
+    "class": "Focused",
+    "encoded_class": 1,
+    "probabilities": [
+      0.0,
+      1.0,
+      0.0
+    ],
+    "selected_from": "Phase 1 training class counts only",
+    "training_class_counts": {
+      "Distracted": 230634,
+      "Focused": 238100,
+      "Neutral": 231266
+    }
+  },
+  "method": "sigmoid",
+  "n_jobs": 1,
+  "post_fit_freeze": "FrozenEstimator wraps the fitted calibrator before serialization and test inference",
+  "reliability": {
+    "bins": 10,
+    "plots": [
+      "Distracted",
+      "Focused",
+      "Neutral",
+      "top_label"
+    ],
+    "strategy": "uniform"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "maximum_absolute_difference": 0.0,
+  "partition": "validation",
+  "probabilities_exactly_equal": true,
+  "rows": 100000,
+  "saved_boosting_rounds": 89
+}

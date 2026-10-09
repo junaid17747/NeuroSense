@@ -1,0 +1,17 @@
+Command: rtk proxy .venv/bin/python -B -m src.model.train_eeg_v2_phase2 --jobs 4
+Synthetic EEG feature-space benchmark results only. This uncalibrated model does not establish real EEG accuracy, raw-signal pipeline validity, or clinical validity. Known synthetic feature inconsistencies are preserved. Calibration and test subjects are excluded from fitting, early stopping, and model selection.
+Verifying Phase 1 dataset checksum and all four subject partitions...
+Fitting: 700,000 train rows; early stopping: 100,000 validation rows.
+Maximum rounds: 1000; patience: 50; workers: 4.
+[0]	validation_0-mlogloss:1.08162	validation_1-mlogloss:1.08171
+[25]	validation_0-mlogloss:0.95467	validation_1-mlogloss:0.95657
+[50]	validation_0-mlogloss:0.94359	validation_1-mlogloss:0.94854
+[75]	validation_0-mlogloss:0.93993	validation_1-mlogloss:0.94791
+[100]	validation_0-mlogloss:0.93700	validation_1-mlogloss:0.94795
+[125]	validation_0-mlogloss:0.93415	validation_1-mlogloss:0.94801
+[137]	validation_0-mlogloss:0.93281	validation_1-mlogloss:0.94804
+Training duration: 34.501 seconds; rounds executed: 139.
+Best iteration: 88 (zero-based); saved rounds: 89.
+Validation metrics: {"accuracy": 0.53097, "balanced_accuracy": 0.53018877788976, "classification_report": {"Distracted": {"f1-score": 0.5727101807576722, "precision": 0.5608129657011974, "recall": 0.5851231169459737, "support": 33058.0}, "Focused": {"f1-score": 0.601354552802475, "precision": 0.5690923957481603, "recall": 0.6374944600384104, "support": 33845.0}, "Neutral": {"f1-score": 0.4012983375348063, "precision": 0.4412958399768082, "recall": 0.3679487566848959, "support": 33097.0}, "accuracy": 0.53097, "macro avg": {"f1-score": 0.5251210236983178, "precision": 0.5237337338087219, "recall": 0.53018877788976, "support": 100000.0}, "weighted avg": {"f1-score": 0.5256726907247639, "precision": 0.5240585556995909, "recall": 0.53097, "support": 100000.0}}, "confusion_matrix": [[19343, 5738, 7977], [4828, 21576, 7441], [10320, 10599, 12178]], "log_loss": 0.9478859305381775, "macro_f1": 0.5251210236983178}
+Model reload verified on all validation rows; artifacts: models/eeg_v2/phase2_seed42
+Exit code: 0

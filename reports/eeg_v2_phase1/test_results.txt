@@ -1,0 +1,40 @@
+Command: rtk proxy .venv/bin/python -B -m unittest discover -s tests -p test_*.py -v
+test_assignment_is_independent_of_subject_input_order (test_eeg_v2_phase1.Phase1Tests.test_assignment_is_independent_of_subject_input_order) ... ok
+test_audit_paths_cannot_escape_neurosense (test_eeg_v2_phase1.Phase1Tests.test_audit_paths_cannot_escape_neurosense) ... ok
+test_bias_corrected_kurtosis_is_not_incorrectly_rejected_at_minus_two (test_eeg_v2_phase1.Phase1Tests.test_bias_corrected_kurtosis_is_not_incorrectly_rejected_at_minus_two) ... ok
+test_disjoint_but_reassigned_manifest_subjects_rejected (test_eeg_v2_phase1.Phase1Tests.test_disjoint_but_reassigned_manifest_subjects_rejected) ... ok
+test_duplicate_features_within_partition_reported_without_false_leakage (test_eeg_v2_phase1.Phase1Tests.test_duplicate_features_within_partition_reported_without_false_leakage) ... ok
+test_duplicate_subject_sample_key_rejected (test_eeg_v2_phase1.Phase1Tests.test_duplicate_subject_sample_key_rejected) ... ok
+test_each_partition_requires_all_classes (test_eeg_v2_phase1.Phase1Tests.test_each_partition_requires_all_classes) ... ok
+test_empty_dataset_rejected (test_eeg_v2_phase1.Phase1Tests.test_empty_dataset_rejected) ... ok
+test_exact_counts_disjoint_subjects_and_complete_row_coverage (test_eeg_v2_phase1.Phase1Tests.test_exact_counts_disjoint_subjects_and_complete_row_coverage) ... ok
+test_existing_artifacts_are_never_overwritten (test_eeg_v2_phase1.Phase1Tests.test_existing_artifacts_are_never_overwritten) ... ok
+test_feature_allowlist_excludes_identifiers_labels_and_added_metadata (test_eeg_v2_phase1.Phase1Tests.test_feature_allowlist_excludes_identifiers_labels_and_added_metadata) ... ok
+test_feature_inconsistencies_are_measured_without_mutating_data (test_eeg_v2_phase1.Phase1Tests.test_feature_inconsistencies_are_measured_without_mutating_data) ... ok
+test_identical_features_across_partitions_rejected_even_with_different_label (test_eeg_v2_phase1.Phase1Tests.test_identical_features_across_partitions_rejected_even_with_different_label) ... ok
+test_invalid_audit_writes_failure_report_but_no_manifest (test_eeg_v2_phase1.Phase1Tests.test_invalid_audit_writes_failure_report_but_no_manifest) ... ok
+test_invalid_sample_ids_rejected (test_eeg_v2_phase1.Phase1Tests.test_invalid_sample_ids_rejected) ... ok
+test_invalid_seeds_rejected (test_eeg_v2_phase1.Phase1Tests.test_invalid_seeds_rejected) ... ok
+test_invalid_subject_ids_rejected (test_eeg_v2_phase1.Phase1Tests.test_invalid_subject_ids_rejected) ... ok
+test_manifest_roundtrip_and_file_byte_tampering (test_eeg_v2_phase1.Phase1Tests.test_manifest_roundtrip_and_file_byte_tampering) ... ok
+test_missing_partition_or_duplicate_member_rejected (test_eeg_v2_phase1.Phase1Tests.test_missing_partition_or_duplicate_member_rejected) ... ok
+test_missing_subject_or_window_rejected (test_eeg_v2_phase1.Phase1Tests.test_missing_subject_or_window_rejected) ... ok
+test_nan_infinity_and_text_features_rejected (test_eeg_v2_phase1.Phase1Tests.test_nan_infinity_and_text_features_rejected) ... ok
+test_repeat_runs_and_row_reordering_produce_identical_manifest (test_eeg_v2_phase1.Phase1Tests.test_repeat_runs_and_row_reordering_produce_identical_manifest) ... ok
+test_repeated_sample_ids_across_subjects_are_valid (test_eeg_v2_phase1.Phase1Tests.test_repeated_sample_ids_across_subjects_are_valid) ... ok
+test_schema_order_missing_and_extra_columns_rejected (test_eeg_v2_phase1.Phase1Tests.test_schema_order_missing_and_extra_columns_rejected) ... ok
+test_seed_changes_membership_reproducibly (test_eeg_v2_phase1.Phase1Tests.test_seed_changes_membership_reproducibly) ... ok
+test_spectral_identity_and_range_mismatches_are_recorded (test_eeg_v2_phase1.Phase1Tests.test_spectral_identity_and_range_mismatches_are_recorded) ... ok
+test_stale_dataset_fingerprint_rejected (test_eeg_v2_phase1.Phase1Tests.test_stale_dataset_fingerprint_rejected) ... ok
+test_subject_assignment_does_not_depend_on_labels_or_features (test_eeg_v2_phase1.Phase1Tests.test_subject_assignment_does_not_depend_on_labels_or_features) ... ok
+test_subject_overlap_rejected (test_eeg_v2_phase1.Phase1Tests.test_subject_overlap_rejected) ... ok
+test_tampered_manifest_fields_rejected (test_eeg_v2_phase1.Phase1Tests.test_tampered_manifest_fields_rejected) ... ok
+test_unknown_subject_and_unassigned_rows_rejected (test_eeg_v2_phase1.Phase1Tests.test_unknown_subject_and_unassigned_rows_rejected) ... ok
+test_wrong_or_missing_labels_rejected (test_eeg_v2_phase1.Phase1Tests.test_wrong_or_missing_labels_rejected) ... ok
+test_published_manifest_matches_all_one_million_windows (test_eeg_v2_phase1.PublishedDatasetTests.test_published_manifest_matches_all_one_million_windows) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 27.186s
+
+OK
+Exit code: 0

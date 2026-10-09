@@ -1,0 +1,6 @@
+{
+  "freeze_record_sha256": "f2c435c7f361ab9ec57c04b32c8dc1868e983eed2544a03defd7ac33f6596a07",
+  "rule": "Single test inference per model. Never rerun; reuse saved predictions for statistics.",
+  "run_directory": "models/eeg_v2/phase3_sigmoid_v1_seed42",
+  "started_at_utc": "2026-10-09T07:21:54.041739+00:00"
+}

@@ -1,0 +1,43 @@
+{
+  "base_booster_state_sha256": "de4377f2682e30ea980edceb41799514500567fea4e39bc7d7595c4e2e227ca0",
+  "base_model_file_sha256": "315b603ae4ca56d3d76305337328a548af738aa4f78f65dfe609b65ba1cf6172",
+  "frozen_artifacts": {
+    "calibrated_model.joblib": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/calibrated_model.joblib",
+      "sha256": "1e7c5ad40bf1d192df63252cc40d6e4cfec584b5ebacf8cda03275158f06ba11",
+      "size_bytes": 876496
+    },
+    "calibration_config.json": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/calibration_config.json",
+      "sha256": "9ad860644236d39c09d5790498428911dde54b27a1e6f2139b010e347ee8c563",
+      "size_bytes": 2382
+    },
+    "class_mapping.json": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/class_mapping.json",
+      "sha256": "7d36279b64b711cc1b7afa5537ff49e16c400773b142eb5adca02b19cd7466a4",
+      "size_bytes": 60
+    },
+    "feature_schema.json": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/feature_schema.json",
+      "sha256": "1ca6039c56ec614abe238562645b7456317fd725524d7f3a9756b8ec14798452",
+      "size_bytes": 617
+    },
+    "provenance.json": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/provenance.json",
+      "sha256": "67af2ab7a17b1cfcab9e42ec7ff07dc02ad841c8cb1af725ee682c93d4c270e7",
+      "size_bytes": 3560
+    },
+    "split_manifest.json": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/split_manifest.json",
+      "sha256": "2a427ef2895b9d19c4b297186ce1e8f404337fd6691e5f48c24a5c29b3cf4c29",
+      "size_bytes": 19230
+    },
+    "uncalibrated_xgboost.ubj": {
+      "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/uncalibrated_xgboost.ubj",
+      "sha256": "315b603ae4ca56d3d76305337328a548af738aa4f78f65dfe609b65ba1cf6172",
+      "size_bytes": 2331071
+    }
+  },
+  "frozen_at_utc": "2026-10-09T07:21:53.561761+00:00",
+  "test_inference_started": false
+}

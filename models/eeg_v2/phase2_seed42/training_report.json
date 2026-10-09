@@ -1,0 +1,272 @@
+{
+  "artifacts": {
+    "booster_config.json": {
+      "path": "models/eeg_v2/phase2_seed42/booster_config.json",
+      "sha256": "1544e69db9412e40bb6558cde808265557215ca15ced161d42d26c2046cf9b44",
+      "size_bytes": 9275
+    },
+    "class_mapping.json": {
+      "path": "models/eeg_v2/phase2_seed42/class_mapping.json",
+      "sha256": "7d36279b64b711cc1b7afa5537ff49e16c400773b142eb5adca02b19cd7466a4",
+      "size_bytes": 60
+    },
+    "learning_curves.csv": {
+      "path": "models/eeg_v2/phase2_seed42/learning_curves.csv",
+      "sha256": "e38d85db3172c99180fc0982429db2dfc0e17a94a2838098553fb9e7e7e233b2",
+      "size_bytes": 6349
+    },
+    "learning_curves.json": {
+      "path": "models/eeg_v2/phase2_seed42/learning_curves.json",
+      "sha256": "99bd2f3e26781c93f6949b8395fdc257fcabd8ff27acc28cd1e4c8b3c8083250",
+      "size_bytes": 6755
+    },
+    "learning_curves.png": {
+      "path": "models/eeg_v2/phase2_seed42/learning_curves.png",
+      "sha256": "c322702f00b38abd8316932204f69a34182f5c5e15d4fd557e2a207104f9b0be",
+      "size_bytes": 76739
+    },
+    "split_manifest.json": {
+      "path": "models/eeg_v2/phase2_seed42/split_manifest.json",
+      "sha256": "2a427ef2895b9d19c4b297186ce1e8f404337fd6691e5f48c24a5c29b3cf4c29",
+      "size_bytes": 19230
+    },
+    "xgboost.ubj": {
+      "path": "models/eeg_v2/phase2_seed42/xgboost.ubj",
+      "sha256": "315b603ae4ca56d3d76305337328a548af738aa4f78f65dfe609b65ba1cf6172",
+      "size_bytes": 2331071
+    }
+  },
+  "benchmark": "synthetic EEG feature-space",
+  "best_iteration_zero_based": 88,
+  "best_round_one_based": 89,
+  "best_validation_mlogloss": 0.9478859518368542,
+  "classes": [
+    "Distracted",
+    "Focused",
+    "Neutral"
+  ],
+  "configuration": {
+    "colsample_bytree": 0.85,
+    "learning_rate": 0.08,
+    "max_depth": 7,
+    "max_rounds": 1000,
+    "n_jobs": 4,
+    "patience": 50,
+    "seed": 42,
+    "subsample": 0.85
+  },
+  "data_usage": {
+    "calibration_performed": false,
+    "curve_monitoring": [
+      "train",
+      "validation"
+    ],
+    "early_stopping": [
+      "validation"
+    ],
+    "excluded_from_fitting_and_selection": [
+      "calibration",
+      "test"
+    ],
+    "fit": [
+      "train"
+    ],
+    "hyperparameter_search_performed": false,
+    "metrics": [
+      "validation"
+    ],
+    "test_evaluated": false
+  },
+  "dataset": {
+    "path": "data/processed/neurosense_eeg_v2_synthetic_1m.csv",
+    "sha256": "6c36f1bf2c1a6a6d4ee133d9a1aac0e0ec2324bc2a79bdec65347bbf3ad4f99d",
+    "size_bytes": 397983105
+  },
+  "early_stopping": {
+    "callback": "xgboost.callback.EarlyStopping",
+    "data_name": "validation_1",
+    "maximize": false,
+    "metric_name": "mlogloss",
+    "min_delta": 0.0,
+    "rounds": 50,
+    "save_best": true
+  },
+  "environment": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "platform": "Linux-7.0.0-34-generic-x86_64-with-glibc2.43",
+    "python": "3.12.3",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "feature_names": [
+    "delta_power",
+    "theta_power",
+    "alpha_power",
+    "beta_power",
+    "low_gamma_power",
+    "relative_delta",
+    "relative_theta",
+    "relative_alpha",
+    "relative_beta",
+    "relative_low_gamma",
+    "theta_beta_ratio",
+    "alpha_beta_ratio",
+    "spectral_entropy",
+    "hjorth_activity",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "rms",
+    "variance",
+    "kurtosis",
+    "line_length"
+  ],
+  "label_encoder_fit_partition": "train",
+  "limitation": "Synthetic EEG feature-space benchmark results only. This uncalibrated model does not establish real EEG accuracy, raw-signal pipeline validity, or clinical validity. Known synthetic feature inconsistencies are preserved. Calibration and test subjects are excluded from fitting, early stopping, and model selection.",
+  "manifest": {
+    "path": "reports/eeg_v2_phase1/split_manifest.json",
+    "sha256": "2a427ef2895b9d19c4b297186ce1e8f404337fd6691e5f48c24a5c29b3cf4c29"
+  },
+  "model_parameters": {
+    "colsample_bytree": 0.85,
+    "device": "cpu",
+    "eval_metric": "mlogloss",
+    "learning_rate": 0.08,
+    "max_depth": 7,
+    "n_estimators": 1000,
+    "n_jobs": 4,
+    "objective": "multi:softprob",
+    "random_state": 42,
+    "subsample": 0.85,
+    "tree_method": "hist"
+  },
+  "model_type": "uncalibrated XGBClassifier",
+  "phase": 2,
+  "preprocessing": "None; all 20 frozen numeric features used without changes.",
+  "report_version": 1,
+  "rounds_executed": 139,
+  "saved_boosting_rounds": 89,
+  "seeds": {
+    "subject_split": 42,
+    "xgboost": 42
+  },
+  "source_fingerprints": [
+    {
+      "path": "src/model/train_eeg_v2_phase2.py",
+      "sha256": "8e92de0ee2577a46bd9c2c06c4024d4877c074d0c683af4f9f0421df0d0ac660",
+      "size_bytes": 19985
+    },
+    {
+      "path": "src/model/eeg_v2_data.py",
+      "sha256": "6a9985e111522bf0dc5b597b77b2208669e433133e5b04ef23730b23689138fd",
+      "size_bytes": 15420
+    },
+    {
+      "path": "src/features/eeg_features_v1.py",
+      "sha256": "989c1035660598e42cec42fe67c7112da59ed89f2f16c22fa71416201b9b627a",
+      "size_bytes": 3803
+    }
+  ],
+  "split_summary": {
+    "calibration": {
+      "class_counts": {
+        "Distracted": 32938,
+        "Focused": 33855,
+        "Neutral": 33207
+      },
+      "purpose": "Fit probability calibration only after model selection is frozen.",
+      "rows": 100000,
+      "subject_count": 100
+    },
+    "test": {
+      "class_counts": {
+        "Distracted": 33138,
+        "Focused": 34059,
+        "Neutral": 32803
+      },
+      "purpose": "Final evaluation only after model selection and calibration are frozen.",
+      "rows": 100000,
+      "subject_count": 100
+    },
+    "train": {
+      "class_counts": {
+        "Distracted": 230634,
+        "Focused": 238100,
+        "Neutral": 231266
+      },
+      "purpose": "Fit model and any learned preprocessing only on these subjects.",
+      "rows": 700000,
+      "subject_count": 700
+    },
+    "validation": {
+      "class_counts": {
+        "Distracted": 33058,
+        "Focused": 33845,
+        "Neutral": 33097
+      },
+      "purpose": "Choose hyperparameters and early stopping; do not fit preprocessing here.",
+      "rows": 100000,
+      "subject_count": 100
+    }
+  },
+  "started_at_utc": "2026-10-09T06:55:33.713199+00:00",
+  "stopping_reason": "early_stopping",
+  "total_duration_before_report_seconds": 66.61080263300028,
+  "training_duration_seconds": 34.501331000999926,
+  "validation_metrics": {
+    "accuracy": 0.53097,
+    "balanced_accuracy": 0.53018877788976,
+    "classification_report": {
+      "Distracted": {
+        "f1-score": 0.5727101807576722,
+        "precision": 0.5608129657011974,
+        "recall": 0.5851231169459737,
+        "support": 33058.0
+      },
+      "Focused": {
+        "f1-score": 0.601354552802475,
+        "precision": 0.5690923957481603,
+        "recall": 0.6374944600384104,
+        "support": 33845.0
+      },
+      "Neutral": {
+        "f1-score": 0.4012983375348063,
+        "precision": 0.4412958399768082,
+        "recall": 0.3679487566848959,
+        "support": 33097.0
+      },
+      "accuracy": 0.53097,
+      "macro avg": {
+        "f1-score": 0.5251210236983178,
+        "precision": 0.5237337338087219,
+        "recall": 0.53018877788976,
+        "support": 100000.0
+      },
+      "weighted avg": {
+        "f1-score": 0.5256726907247639,
+        "precision": 0.5240585556995909,
+        "recall": 0.53097,
+        "support": 100000.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        19343,
+        5738,
+        7977
+      ],
+      [
+        4828,
+        21576,
+        7441
+      ],
+      [
+        10320,
+        10599,
+        12178
+      ]
+    ],
+    "log_loss": 0.9478859305381775,
+    "macro_f1": 0.5251210236983178
+  }
+}

@@ -1,0 +1,378 @@
+{
+  "audit_version": 1,
+  "dataset": {
+    "path": "data/processed/neurosense_eeg_v2_synthetic_1m.csv",
+    "sha256": "6c36f1bf2c1a6a6d4ee133d9a1aac0e0ec2324bc2a79bdec65347bbf3ad4f99d",
+    "size_bytes": 397983105
+  },
+  "dataset_unchanged": true,
+  "environment": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12.3"
+  },
+  "features": {
+    "counts": {
+      "alpha_beta_ratio_mismatch": 0,
+      "hjorth_activity_variance_exact_duplicates": 1000000,
+      "hjorth_activity_variance_mismatch": 0,
+      "kurtosis_below_minus_two": 6928,
+      "kurtosis_below_unbiased_1024_sample_bound": 6791,
+      "negative_non_kurtosis_features": 0,
+      "relative_power_formula_mismatch": 0,
+      "relative_power_outside_unit_interval": 0,
+      "relative_power_sum_mismatch": 0,
+      "rms_squared_below_variance": 500045,
+      "theta_beta_ratio_mismatch": 0
+    },
+    "feature_statistics": {
+      "alpha_beta_ratio": {
+        "max": 20.61699561958712,
+        "mean": 1.2147041995393237,
+        "min": 0.0516226281892468,
+        "std_ddof_1": 0.7780392682254097
+      },
+      "alpha_power": {
+        "max": 12.86088997968876,
+        "mean": 1.4643976460467907,
+        "min": 0.1702760992748954,
+        "std_ddof_1": 0.652521164015383
+      },
+      "beta_power": {
+        "max": 13.620952495210558,
+        "mean": 1.4637599169309246,
+        "min": 0.0962505893473948,
+        "std_ddof_1": 0.7264029075396222
+      },
+      "delta_power": {
+        "max": 9.451824816838668,
+        "mean": 1.2105773890051847,
+        "min": 0.13190701989831,
+        "std_ddof_1": 0.5589611562746737
+      },
+      "hjorth_activity": {
+        "max": 3135.274350592058,
+        "mean": 595.7032309594607,
+        "min": 102.76324709621456,
+        "std_ddof_1": 220.93108912711799
+      },
+      "hjorth_complexity": {
+        "max": 4.227720112598076,
+        "mean": 2.3640658508290193,
+        "min": 0.5239164539857156,
+        "std_ddof_1": 0.3806814290443428
+      },
+      "hjorth_mobility": {
+        "max": 1.1213275447212818,
+        "mean": 0.612509929259826,
+        "min": 0.1037565949552428,
+        "std_ddof_1": 0.10147515692741264
+      },
+      "kurtosis": {
+        "max": 2.6380684632103204,
+        "mean": -0.4014566482919573,
+        "min": -2.5,
+        "std_ddof_1": 0.6494050189356397
+      },
+      "line_length": {
+        "max": 30039.24645640387,
+        "mean": 10660.689260883793,
+        "min": 3564.20736461722,
+        "std_ddof_1": 2310.8090062938672
+      },
+      "low_gamma_power": {
+        "max": 6.8799846118524375,
+        "mean": 0.9038794398265942,
+        "min": 0.0871113464726796,
+        "std_ddof_1": 0.4367078600291946
+      },
+      "relative_alpha": {
+        "max": 0.6932532098328399,
+        "mean": 0.2281774884299617,
+        "min": 0.0256648053321991,
+        "std_ddof_1": 0.07659954962581969
+      },
+      "relative_beta": {
+        "max": 0.770817853490177,
+        "mean": 0.22718740073589969,
+        "min": 0.0220881456467828,
+        "std_ddof_1": 0.08590710605924474
+      },
+      "relative_delta": {
+        "max": 0.652087312909815,
+        "mean": 0.18915211854804237,
+        "min": 0.0221734431810114,
+        "std_ddof_1": 0.068502285134897
+      },
+      "relative_low_gamma": {
+        "max": 0.5650129447648313,
+        "mean": 0.1419670980683634,
+        "min": 0.0155441400730596,
+        "std_ddof_1": 0.05702944386594347
+      },
+      "relative_theta": {
+        "max": 0.7899660924334898,
+        "mean": 0.21351589421773268,
+        "min": 0.0227700153831576,
+        "std_ddof_1": 0.0807656104729812
+      },
+      "rms": {
+        "max": 59.09719267598551,
+        "mean": 24.016224437722833,
+        "min": 9.950675515275966,
+        "std_ddof_1": 4.452678785828595
+      },
+      "spectral_entropy": {
+        "max": 4.565196885677255,
+        "mean": 3.1101150220998552,
+        "min": 1.6520539990063725,
+        "std_ddof_1": 0.30119435441597503
+      },
+      "theta_beta_ratio": {
+        "max": 26.34206276046152,
+        "mean": 1.1623632923217444,
+        "min": 0.0475280273788481,
+        "std_ddof_1": 0.8444985863863884
+      },
+      "theta_power": {
+        "max": 11.381467266871828,
+        "mean": 1.3731631571657248,
+        "min": 0.1179503377189862,
+        "std_ddof_1": 0.674473018076024
+      },
+      "variance": {
+        "max": 3135.274350592058,
+        "mean": 595.7032309594607,
+        "min": 102.76324709621456,
+        "std_ddof_1": 220.93108912711799
+      }
+    },
+    "rms_squared_minus_variance": {
+      "max": 478.82651676526734,
+      "mean": 0.9021338270344494,
+      "min": -551.5493363091848
+    },
+    "tolerances": {
+      "atol": 1e-09,
+      "rtol": 1e-07
+    },
+    "unbiased_kurtosis_lower_bound_1024_samples": -2.0039177277179236,
+    "warnings": [
+      {
+        "code": "rms_variance_inconsistency",
+        "detail": "For one raw window, RMS squared = variance + mean squared. Independent synthetic RMS noise violates this identity when RMS squared < variance.",
+        "rows": 500045
+      },
+      {
+        "code": "kurtosis_out_of_range",
+        "detail": "The synthetic generator clips kurtosis at -2.5. Some values fall below the bias-corrected Fisher kurtosis lower bound for the extractor's 1024-sample windows.",
+        "rows": 6791
+      },
+      {
+        "code": "redundant_activity_variance",
+        "detail": "Hjorth activity and variance are the same statistic in both generator and extractor. This is feature redundancy, not an integrity failure; both schema columns are preserved.",
+        "rows": 1000000
+      },
+      {
+        "code": "feature_space_only",
+        "detail": "No underlying raw EEG windows exist in this CSV. Time-domain/complexity features are sampled separately; variance is not regenerated after band-power noise. Spectral entropy, Hjorth derivatives, line length and raw-signal equivalence cannot be validated from these columns. No real-EEG accuracy or clinical validity is established."
+      }
+    ]
+  },
+  "integrity": {
+    "class_counts": {
+      "Distracted": 329768,
+      "Focused": 339859,
+      "Neutral": 330373
+    },
+    "columns": [
+      "subject_id",
+      "sample_id",
+      "delta_power",
+      "theta_power",
+      "alpha_power",
+      "beta_power",
+      "low_gamma_power",
+      "relative_delta",
+      "relative_theta",
+      "relative_alpha",
+      "relative_beta",
+      "relative_low_gamma",
+      "theta_beta_ratio",
+      "alpha_beta_ratio",
+      "spectral_entropy",
+      "hjorth_activity",
+      "hjorth_mobility",
+      "hjorth_complexity",
+      "rms",
+      "variance",
+      "kurtosis",
+      "line_length",
+      "label"
+    ],
+    "duplicate_complete_rows": 0,
+    "duplicate_feature_vectors": 0,
+    "duplicate_subject_sample_keys": 0,
+    "errors": [],
+    "expected_columns": [
+      "subject_id",
+      "sample_id",
+      "delta_power",
+      "theta_power",
+      "alpha_power",
+      "beta_power",
+      "low_gamma_power",
+      "relative_delta",
+      "relative_theta",
+      "relative_alpha",
+      "relative_beta",
+      "relative_low_gamma",
+      "theta_beta_ratio",
+      "alpha_beta_ratio",
+      "spectral_entropy",
+      "hjorth_activity",
+      "hjorth_mobility",
+      "hjorth_complexity",
+      "rms",
+      "variance",
+      "kurtosis",
+      "line_length",
+      "label"
+    ],
+    "expected_samples_per_subject": 1000,
+    "expected_subjects": 1000,
+    "feature_count": 20,
+    "invalid_sample_id_rows": 0,
+    "invalid_subject_id_rows": 0,
+    "missing_values_by_column": {
+      "alpha_beta_ratio": 0,
+      "alpha_power": 0,
+      "beta_power": 0,
+      "delta_power": 0,
+      "hjorth_activity": 0,
+      "hjorth_complexity": 0,
+      "hjorth_mobility": 0,
+      "kurtosis": 0,
+      "label": 0,
+      "line_length": 0,
+      "low_gamma_power": 0,
+      "relative_alpha": 0,
+      "relative_beta": 0,
+      "relative_delta": 0,
+      "relative_low_gamma": 0,
+      "relative_theta": 0,
+      "rms": 0,
+      "sample_id": 0,
+      "spectral_entropy": 0,
+      "subject_id": 0,
+      "theta_beta_ratio": 0,
+      "theta_power": 0,
+      "variance": 0
+    },
+    "nonfinite_or_nonnumeric_by_feature": {
+      "alpha_beta_ratio": 0,
+      "alpha_power": 0,
+      "beta_power": 0,
+      "delta_power": 0,
+      "hjorth_activity": 0,
+      "hjorth_complexity": 0,
+      "hjorth_mobility": 0,
+      "kurtosis": 0,
+      "line_length": 0,
+      "low_gamma_power": 0,
+      "relative_alpha": 0,
+      "relative_beta": 0,
+      "relative_delta": 0,
+      "relative_low_gamma": 0,
+      "relative_theta": 0,
+      "rms": 0,
+      "spectral_entropy": 0,
+      "theta_beta_ratio": 0,
+      "theta_power": 0,
+      "variance": 0
+    },
+    "nonnumeric_feature_dtypes": [],
+    "rows": 1000000,
+    "rows_per_subject": {
+      "histogram": {
+        "1000": 1000
+      },
+      "max": 1000,
+      "min": 1000
+    },
+    "subject_count": 1000
+  },
+  "leakage_checks": {
+    "all_classes_in_every_partition": true,
+    "cross_partition_identical_feature_vectors": 0,
+    "model_features_exclude_identifiers_and_label": true,
+    "pairwise_subject_overlap": 0,
+    "row_overlap": 0,
+    "unassigned_rows": 0
+  },
+  "source_fingerprints": [
+    {
+      "path": "src/model/eeg_v2_data.py",
+      "sha256": "6a9985e111522bf0dc5b597b77b2208669e433133e5b04ef23730b23689138fd",
+      "size_bytes": 15420
+    },
+    {
+      "path": "src/model/audit_eeg_v2.py",
+      "sha256": "5f2891e342b7edfd0b7430c3e8d9d0074e11ee585684e6d63d74004c833f7d4a",
+      "size_bytes": 4862
+    },
+    {
+      "path": "src/model/generate_synthetic_eeg_v2_1m.py",
+      "sha256": "47f30396e35d44259b10b9b37c876fec13e0744b4326b7b94d7abc6f9e02255f",
+      "size_bytes": 8238
+    },
+    {
+      "path": "src/features/eeg_features_v1.py",
+      "sha256": "989c1035660598e42cec42fe67c7112da59ed89f2f16c22fa71416201b9b627a",
+      "size_bytes": 3803
+    }
+  ],
+  "split_summary": {
+    "calibration": {
+      "class_counts": {
+        "Distracted": 32938,
+        "Focused": 33855,
+        "Neutral": 33207
+      },
+      "purpose": "Fit probability calibration only after model selection is frozen.",
+      "rows": 100000,
+      "subject_count": 100
+    },
+    "test": {
+      "class_counts": {
+        "Distracted": 33138,
+        "Focused": 34059,
+        "Neutral": 32803
+      },
+      "purpose": "Final evaluation only after model selection and calibration are frozen.",
+      "rows": 100000,
+      "subject_count": 100
+    },
+    "train": {
+      "class_counts": {
+        "Distracted": 230634,
+        "Focused": 238100,
+        "Neutral": 231266
+      },
+      "purpose": "Fit model and any learned preprocessing only on these subjects.",
+      "rows": 700000,
+      "subject_count": 700
+    },
+    "validation": {
+      "class_counts": {
+        "Distracted": 33058,
+        "Focused": 33845,
+        "Neutral": 33097
+      },
+      "purpose": "Choose hyperparameters and early stopping; do not fit preprocessing here.",
+      "rows": 100000,
+      "subject_count": 100
+    }
+  },
+  "status": "passed_with_warnings"
+}

@@ -1,0 +1,87 @@
+{
+  "bootstrap_confidence_intervals.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/bootstrap_confidence_intervals.json",
+    "sha256": "d0d8f4ab44315e9a96e57d701169c4e04f38fd09de533d59a7ba78bfce9a2bc2",
+    "size_bytes": 10228
+  },
+  "bootstrap_subject_counts.npz": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/bootstrap_subject_counts.npz",
+    "sha256": "a32c48820493106683d45a1efbfd5dd4a6d261466bf3fc3ba2cb96fcb9ce014d",
+    "size_bytes": 100433
+  },
+  "calibrated_model.joblib": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/calibrated_model.joblib",
+    "sha256": "1e7c5ad40bf1d192df63252cc40d6e4cfec584b5ebacf8cda03275158f06ba11",
+    "size_bytes": 876496
+  },
+  "calibration_config.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/calibration_config.json",
+    "sha256": "9ad860644236d39c09d5790498428911dde54b27a1e6f2139b010e347ee8c563",
+    "size_bytes": 2382
+  },
+  "class_mapping.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/class_mapping.json",
+    "sha256": "7d36279b64b711cc1b7afa5537ff49e16c400773b142eb5adca02b19cd7466a4",
+    "size_bytes": 60
+  },
+  "evaluation_report.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/evaluation_report.json",
+    "sha256": "e567065b3a2543670d425cd19878a8d6e6ce60e8a34e5ac5c1408c63ab1949b8",
+    "size_bytes": 4775
+  },
+  "feature_schema.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/feature_schema.json",
+    "sha256": "1ca6039c56ec614abe238562645b7456317fd725524d7f3a9756b8ec14798452",
+    "size_bytes": 617
+  },
+  "freeze_record.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/freeze_record.json",
+    "sha256": "f2c435c7f361ab9ec57c04b32c8dc1868e983eed2544a03defd7ac33f6596a07",
+    "size_bytes": 1882
+  },
+  "per_subject_metrics.csv": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/per_subject_metrics.csv",
+    "sha256": "483db0a4deb8ad62649c913cf1dc63301476525e2a73454b63c038e904b7ac39",
+    "size_bytes": 78593
+  },
+  "provenance.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/provenance.json",
+    "sha256": "67af2ab7a17b1cfcab9e42ec7ff07dc02ad841c8cb1af725ee682c93d4c270e7",
+    "size_bytes": 3560
+  },
+  "reliability_bins.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/reliability_bins.json",
+    "sha256": "2cb732f011666138fd84c8c2a549257bf3997876768bad87047b85aa2cc40c06",
+    "size_bytes": 26613
+  },
+  "reliability_diagrams.png": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/reliability_diagrams.png",
+    "sha256": "ea4e6a111b5b41924959b5a62dc9afe84e6f553d34a1834658132ab40fd561d9",
+    "size_bytes": 245028
+  },
+  "reload_verification.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/reload_verification.json",
+    "sha256": "7bb1cb5b21adacc6e6948698f3135ef80a38caa168efd36ae52b511d4ad1d851",
+    "size_bytes": 128
+  },
+  "split_manifest.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/split_manifest.json",
+    "sha256": "2a427ef2895b9d19c4b297186ce1e8f404337fd6691e5f48c24a5c29b3cf4c29",
+    "size_bytes": 19230
+  },
+  "test_inference_completed.json": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/test_inference_completed.json",
+    "sha256": "dc6a0a9c38dc36ac77c67da78691aa651d478163b84a449b8cc908f44e98781a",
+    "size_bytes": 372
+  },
+  "test_predictions.npz": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/test_predictions.npz",
+    "sha256": "3df4d2f4ede37922924f2287f248b4a1a616de4459ac1cff146b3635a367952d",
+    "size_bytes": 3558050
+  },
+  "uncalibrated_xgboost.ubj": {
+    "path": "models/eeg_v2/phase3_sigmoid_v1_seed42/uncalibrated_xgboost.ubj",
+    "sha256": "315b603ae4ca56d3d76305337328a548af738aa4f78f65dfe609b65ba1cf6172",
+    "size_bytes": 2331071
+  }
+}

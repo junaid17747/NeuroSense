@@ -1,0 +1,184 @@
+{
+  "base_model_state_unchanged": true,
+  "benchmark": "synthetic EEG feature-space",
+  "bootstrap_confidence_intervals": "bootstrap_confidence_intervals.json",
+  "calibration_config": "calibration_config.json",
+  "calibration_duration_seconds": 0.5967923660027736,
+  "class_order": [
+    "Distracted",
+    "Focused",
+    "Neutral"
+  ],
+  "dataset_unchanged": true,
+  "frozen_model_sha256": "1e7c5ad40bf1d192df63252cc40d6e4cfec584b5ebacf8cda03275158f06ba11",
+  "further_tuning_performed": false,
+  "limitation": "Synthetic EEG feature-space benchmark results only. No clinical validity, real-world attention detection performance, or raw-EEG pipeline validity is established. Synthetic RMS/variance, kurtosis and absolute power-scale inconsistencies are preserved. The test results are final descriptive estimates, not inputs to further tuning.",
+  "per_subject_metrics": "per_subject_metrics.csv",
+  "phase": 3,
+  "prediction_cache_sha256": "3df4d2f4ede37922924f2287f248b4a1a616de4459ac1cff146b3635a367952d",
+  "provenance": "provenance.json",
+  "reliability_diagrams": "reliability_diagrams.png",
+  "test_inference_calls": {
+    "calibrated": 1,
+    "uncalibrated": 1
+  },
+  "test_metrics": {
+    "calibrated": {
+      "accuracy": 0.52706,
+      "balanced_accuracy": 0.5258581181226034,
+      "class_order": [
+        "Distracted",
+        "Focused",
+        "Neutral"
+      ],
+      "confusion_matrix": [
+        [
+          18558,
+          5396,
+          9184
+        ],
+        [
+          4605,
+          20859,
+          8595
+        ],
+        [
+          9548,
+          9966,
+          13289
+        ]
+      ],
+      "log_loss": 0.9555795853692951,
+      "macro_f1": 0.5244567462823557,
+      "multiclass_brier_score": 0.571968994108435,
+      "per_class": {
+        "Distracted": {
+          "f1": 0.5636532065786876,
+          "precision": 0.5673320901225888,
+          "recall": 0.5600217273221075,
+          "support": 33138
+        },
+        "Focused": {
+          "f1": 0.5935970404097894,
+          "precision": 0.5758813947709892,
+          "recall": 0.6124372412578173,
+          "support": 34059
+        },
+        "Neutral": {
+          "f1": 0.41611999185858994,
+          "precision": 0.42773915282605895,
+          "recall": 0.40511538578788525,
+          "support": 32803
+        }
+      },
+      "rows": 100000,
+      "subjects": 100
+    },
+    "majority_class": {
+      "accuracy": 0.34059,
+      "balanced_accuracy": 0.3333333333333333,
+      "class_order": [
+        "Distracted",
+        "Focused",
+        "Neutral"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          33138,
+          0
+        ],
+        [
+          0,
+          34059,
+          0
+        ],
+        [
+          0,
+          32803,
+          0
+        ]
+      ],
+      "log_loss": 23.76754548131804,
+      "macro_f1": 0.16937318643283927,
+      "multiclass_brier_score": 1.31882,
+      "per_class": {
+        "Distracted": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 33138
+        },
+        "Focused": {
+          "f1": 0.5081195592985178,
+          "precision": 0.34059,
+          "recall": 1.0,
+          "support": 34059
+        },
+        "Neutral": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 32803
+        }
+      },
+      "rows": 100000,
+      "subjects": 100
+    },
+    "uncalibrated": {
+      "accuracy": 0.52823,
+      "balanced_accuracy": 0.5267112140404668,
+      "class_order": [
+        "Distracted",
+        "Focused",
+        "Neutral"
+      ],
+      "confusion_matrix": [
+        [
+          19186,
+          5832,
+          8120
+        ],
+        [
+          4978,
+          21583,
+          7498
+        ],
+        [
+          10096,
+          10653,
+          12054
+        ]
+      ],
+      "log_loss": 0.951908236501776,
+      "macro_f1": 0.5221502029438817,
+      "multiclass_brier_score": 0.5705950782110343,
+      "per_class": {
+        "Distracted": {
+          "f1": 0.5693344016142913,
+          "precision": 0.560011675423234,
+          "recall": 0.578972780493693,
+          "support": 33138
+        },
+        "Focused": {
+          "f1": 0.598472139420744,
+          "precision": 0.5669591257749291,
+          "recall": 0.6336944713585249,
+          "support": 34059
+        },
+        "Neutral": {
+          "f1": 0.39864406779661016,
+          "precision": 0.43560277536860365,
+          "recall": 0.3674663902691827,
+          "support": 32803
+        }
+      },
+      "rows": 100000,
+      "subjects": 100
+    }
+  },
+  "test_rows": 100000,
+  "test_subjects": 100,
+  "total_duration_seconds": 30.93519751399799,
+  "uncalibrated_model_sha256": "315b603ae4ca56d3d76305337328a548af738aa4f78f65dfe609b65ba1cf6172"
+}

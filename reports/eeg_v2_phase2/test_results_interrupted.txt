@@ -1,0 +1,3 @@
+First combined-suite attempt was interrupted before buffered output was flushed.
+Tool process exit code: 143 (SIGTERM). No test assertions or completion results were captured.
+Cause was not established. The suite was rerun with streaming output in test_results.txt.

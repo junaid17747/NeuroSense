@@ -1,0 +1,6 @@
+{
+  "maximum_absolute_difference": 0.0,
+  "partition": "calibration",
+  "probabilities_exactly_equal": true,
+  "rows": 100000
+}

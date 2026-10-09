@@ -1,0 +1,31 @@
+{
+  "excluded_model_columns": [
+    "subject_id",
+    "sample_id",
+    "label"
+  ],
+  "feature_count": 20,
+  "feature_names": [
+    "delta_power",
+    "theta_power",
+    "alpha_power",
+    "beta_power",
+    "low_gamma_power",
+    "relative_delta",
+    "relative_theta",
+    "relative_alpha",
+    "relative_beta",
+    "relative_low_gamma",
+    "theta_beta_ratio",
+    "alpha_beta_ratio",
+    "spectral_entropy",
+    "hjorth_activity",
+    "hjorth_mobility",
+    "hjorth_complexity",
+    "rms",
+    "variance",
+    "kurtosis",
+    "line_length"
+  ],
+  "input": "numeric finite DataFrame; exact column order required"
+}
