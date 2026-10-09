@@ -19,6 +19,13 @@
 input, textarea { color-scheme: dark; }
 .stButton > button, .stFormSubmitButton > button { border: 1px solid rgba(72, 231, 255, .32); border-radius: 10px; transition: border-color .2s ease, transform .2s ease; }
 .stButton > button:hover, .stFormSubmitButton > button:hover { border-color: var(--ns-cyan); transform: translateY(-1px); }
+.st-key-start_webcam_monitoring button { min-height: 3.5rem; margin-top: 1rem; background: linear-gradient(110deg, var(--ns-navy-soft), #123d56); color: var(--ns-cyan); border: 1px solid var(--ns-cyan); box-shadow: 0 8px 24px rgba(72,231,255,.12); }
+.st-key-start_webcam_monitoring button p { font-size: 1.1rem; font-weight: 700; }
+.st-key-start_webcam_monitoring button:hover { background: #15455e; color: var(--ns-ink); }
+.st-key-start_webcam_monitoring button:focus-visible { outline: 3px solid var(--ns-cyan); outline-offset: 3px; }
+.st-key-back_to_overview button { background: var(--ns-navy-soft); color: var(--ns-cyan); border-color: var(--ns-cyan); }
+.st-key-back_to_overview button:hover { background: #15455e; color: var(--ns-ink); }
+.st-key-back_to_overview button:focus-visible { outline: 3px solid var(--ns-cyan); outline-offset: 3px; }
 .stProgress > div > div > div { background: linear-gradient(90deg, var(--ns-cyan), var(--ns-violet)); }
 .ns-brand { padding: 1.4rem 0 .4rem; }
 .ns-brand h1 { margin: 0; color: var(--ns-ink); letter-spacing: -.03em; }

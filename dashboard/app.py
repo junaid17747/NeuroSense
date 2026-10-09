@@ -49,6 +49,7 @@ def _reset_user_workspace() -> None:
         "eeg_session_id",
         "attention_history",
         "smoothed_attention_score",
+        "workspace_page",
     ):
         st.session_state.pop(key, None)
 
@@ -190,10 +191,22 @@ def _render_metrics(snapshot: dict) -> None:
         column.metric(label, value)
 
 
+def _navigate(page: str) -> None:
+    st.session_state.workspace_page = page
+
+
 def render_overview(snapshot: dict) -> None:
     st.title("Overview")
     st.caption(f"Sensor mode: {snapshot['sensor_mode'].upper()} · Live authenticated workspace")
     _render_metrics(snapshot)
+    st.button(
+        "📷 Start Webcam Monitoring",
+        key="start_webcam_monitoring",
+        type="primary",
+        use_container_width=True,
+        on_click=_navigate,
+        args=("Webcam Monitoring",),
+    )
     st.divider()
     q1, q2, q3 = st.columns(3)
     q1.metric("EEG Quality", f"{snapshot['eeg_quality']['quality'] * 100:.0f}%")
@@ -206,6 +219,21 @@ def render_overview(snapshot: dict) -> None:
     if not history_df.empty:
         st.line_chart(history_df.set_index(history_df.index)[["Attention Score", "Heart Rate", "Motion Level"]])
     st.info("Synthetic EEG feature-space benchmark results for academic prototyping; no clinical validity is implied.")
+
+
+def render_webcam() -> None:
+    from dashboard.webcam import webcam_preview
+
+    st.title("Webcam Monitoring")
+    st.button(
+        "Back to Overview",
+        key="back_to_overview",
+        on_click=_navigate,
+        args=("Overview",),
+    )
+    st.caption("Enable Camera, align your face, then choose Start Monitoring when calibration is complete.")
+    webcam_preview(key="webcam_preview")
+    st.caption("Video stays in your browser. No video is recorded or uploaded.")
 
 
 def render_live(snapshot: dict) -> None:
@@ -308,11 +336,17 @@ def main() -> None:
         if st.button("Log out", use_container_width=True):
             _clear_auth()
             st.rerun()
-        page = st.radio("Workspace", ["Overview", "Live EEG", "Sessions", "Analytics", "Profile"], label_visibility="collapsed")
+        page = st.radio(
+            "Workspace",
+            ["Overview", "Live EEG", "Webcam Monitoring", "Sessions", "Analytics", "Profile"],
+            key="workspace_page",
+            label_visibility="collapsed",
+        )
     if page in {"Overview", "Live EEG"}:
         snapshot = _sensor_snapshot()
         if page == "Overview": render_overview(snapshot)
         else: render_live(snapshot)
+    elif page == "Webcam Monitoring": render_webcam()
     elif page == "Sessions": render_sessions(user)
     elif page == "Analytics": render_analytics(user)
     else: render_profile(user)
