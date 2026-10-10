@@ -22,6 +22,17 @@ test("missing, out-of-frame, nonfinite and unresolved eye landmarks fail closed"
   assert.equal(eyeAspectRatios(face({ fill: .01 }),640,480),null);
 });
 
+test("glare-like or partially obscured eye landmarks block calibration instead of faking an open-eye baseline", () => {
+  for (const index of [33, 160, 158, 133, 153, 144]) {
+    const landmarks = face();
+    landmarks[index] = null;
+    const eyes = eyeAspectRatios(landmarks, 640, 480);
+    assert.equal(eyes, null);
+    assert.equal(behavioralQuality({ code: "aligned", message: "aligned" }, eyes, baseline, true,
+      { left: .3, right: .7, top: .2, bottom: .8 }).valid, false);
+  }
+});
+
 test("eye baseline is individually calibrated, robust to occasional blinks and rejects closed-eye setup", () => {
   const calibration = new EyeCalibration();
   assert.equal(calibration.baseline(), null);

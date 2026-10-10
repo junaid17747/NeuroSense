@@ -38,3 +38,10 @@ data/logs/*.csv
 
 # Local NeuroSense database
 data/database/*.db
+
+# Clinical EEG stays in an authorized external dataset location.
+*.[eE][dD][fF]
+*.[bB][dD][fF]
+*.seizure
+*.seizures
+data/seizure_research/

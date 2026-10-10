@@ -89,6 +89,18 @@ class WebcamNavigationTests(unittest.TestCase):
         self.assertEqual(self.app.title[0].value, "Webcam Monitoring")
         self.assertEqual(len(self.app.get("bidi_component")), 1)
 
+    def test_streamlit_rerun_keeps_the_same_keyed_webcam_component_mounted(self):
+        self.sign_in()
+        self.app.radio[0].set_value("Webcam Monitoring").run()
+        before = self.app.get("bidi_component")
+        self.assertEqual(len(before), 1)
+        self.app.run()
+        self.assertFalse(self.app.exception)
+        after = self.app.get("bidi_component")
+        self.assertEqual(len(after), 1)
+        self.assertEqual(before[0].key, after[0].key)
+        self.assertEqual(after[0].key, "webcam_preview")
+
     def test_webcam_selection_does_not_bypass_login(self):
         self.app.session_state.workspace_page = "Webcam Monitoring"
         self.app.run()

@@ -16,11 +16,14 @@ function fakeStream() {
   return { getTracks: () => [track], getVideoTracks: () => [track], track };
 }
 
-function setup(t, getUserMedia, loadDetector) {
+function setup(t, getUserMedia, loadDetector, location = { hostname: "example.test", search: "" }) {
   const nodes = new Map();
   for (const id of ["enable-camera", "disable-camera", "camera-video", "camera-status", "camera-placeholder",
     "video-viewport", "alignment-guide", "alignment-message", "calibration-progress", "calibration-value", "start-monitoring", "retry-alignment",
     "pause-monitoring", "resume-monitoring", "stop-monitoring", "tiredness-before", "tiredness-after", "session-status",
+    "monitoring-readiness",
+    "alignment-diagnostics", "diag-camera", "diag-detector", "diag-one-face", "diag-centered", "diag-face-size",
+    "diag-lighting", "diag-head-pose", "diag-stability", "diag-blocking",
     "blink-count", "blink-rate", "eye-closure", "last-closure", "closed-percent", "head-pose", "head-movement", "tracking-confidence",
     "measurement-quality", "valid-time", "rating-summary", "closed-timeline", "motion-timeline", "timeline-start", "timeline-end", "timeline-summary"]) {
     const node = new EventTarget();
@@ -43,6 +46,7 @@ function setup(t, getUserMedia, loadDetector) {
   const frames = new Map(), timers = new Map();
   const window = new EventTarget();
   window.isSecureContext = true;
+  window.location = location;
   const replacements = { navigator: { mediaDevices: { getUserMedia } }, window, document,
     performance: { now: () => now },
     requestAnimationFrame: fn => { const id = nextId++; frames.set(id, fn); return id; },
@@ -159,21 +163,46 @@ for (const [name, message] of [["NotFoundError", /No camera was found/], ["NotRe
 test("calibration enables a separate Start action and alignment loss revokes it", async (t) => {
   const ui = setup(t, async () => fakeStream());
   assert.equal(ui.nodes.get("#start-monitoring").disabled, true);
+  assert.match(ui.nodes.get("#monitoring-readiness").textContent, /Enable the camera first/);
   ui.click("enable-camera");
   await settle();
+  assert.match(ui.nodes.get("#monitoring-readiness").textContent, /fresh camera frame/);
+  let previousProgress = 0;
   for (let time = 0; time < 3000; time += 50) {
     ui.frame(time);
     assert.equal(ui.nodes.get("#start-monitoring").disabled, true);
+    assert(ui.nodes.get("#calibration-progress").value >= previousProgress);
+    previousProgress = ui.nodes.get("#calibration-progress").value;
   }
+  assert.match(ui.nodes.get("#monitoring-readiness").textContent, /aligned for/);
   ui.frame(3000);
   assert.equal(ui.nodes.get("#alignment-message").textContent, "Ready for Monitoring");
   assert.equal(ui.nodes.get("#start-monitoring").disabled, false);
+  assert.match(ui.nodes.get("#monitoring-readiness").textContent, /^Ready\./);
   ui.click("start-monitoring");
   assert.match(ui.nodes.get("#alignment-message").textContent, /Monitoring active/);
   ui.detector.detectForVideo = () => ({ faceLandmarks: [], facialTransformationMatrixes: [] });
   ui.frame(3050);
   assert.equal(ui.nodes.get("#start-monitoring").disabled, true);
   assert.equal(ui.nodes.get("#calibration-progress").value, 0);
+});
+
+test("development diagnostics expose readiness and blockers without face landmarks", async (t) => {
+  const ui = setup(t, async () => fakeStream(), undefined, { hostname: "localhost", search: "" });
+  assert.equal(ui.nodes.get("#alignment-diagnostics").hidden, false);
+  ui.click("enable-camera"); await settle(); ui.frame(0);
+  assert.equal(ui.nodes.get("#diag-camera").textContent, "Yes");
+  assert.equal(ui.nodes.get("#diag-detector").textContent, "Yes");
+  assert.equal(ui.nodes.get("#diag-one-face").textContent, "Pass");
+  assert.equal(ui.nodes.get("#diag-centered").textContent, "Pass");
+  assert.equal(ui.nodes.get("#diag-face-size").textContent, "Pass");
+  assert.equal(ui.nodes.get("#diag-lighting").textContent, "Pass");
+  assert.equal(ui.nodes.get("#diag-head-pose").textContent, "Pass");
+  assert.match(ui.nodes.get("#diag-stability").textContent, /0\.0 \/ 3\.0 s/);
+  assert.match(ui.nodes.get("#diag-blocking").textContent, /Hold this position/);
+  assert.doesNotMatch([...ui.nodes.values()].map(node => node.textContent).join(" "), /0\.5,0\.5|landmarks/i);
+  ui.cleanup();
+  assert.equal(ui.nodes.get("#diag-camera").textContent, "No");
 });
 
 for (const action of ["hidden tab", "frozen frame"]) test(`${action} resets calibration`, async (t) => {
@@ -216,6 +245,7 @@ test("missing model assets preserve preview and offer retry without another came
   assert.match(ui.nodes.get("#alignment-message").textContent, /Face model could not load/);
   assert.equal(ui.nodes.get("#retry-alignment").hidden, false);
   assert.equal(ui.nodes.get("#start-monitoring").disabled, true);
+  assert.match(ui.nodes.get("#monitoring-readiness").textContent, /could not start/);
   assert.notEqual(ui.nodes.get("#camera-video").srcObject, null);
   setFactory(async () => ui.detector);
   ui.click("retry-alignment"); await settle(); ui.frame(0);
@@ -255,15 +285,28 @@ test("Pause, Resume, Stop and a new session reuse one camera stream", async (t) 
   for (let time = 0; time <= 3000; time += 50) ui.frame(time);
   ui.nodes.get("#tiredness-before").value = "3";
   ui.click("start-monitoring");
+  assert.equal(ui.nodes.get("#pause-monitoring").disabled, false);
+  assert.equal(ui.nodes.get("#stop-monitoring").disabled, false);
+  assert.equal(ui.nodes.get("#resume-monitoring").disabled, true);
   for (let time = 3050; time <= 4000; time += 50) ui.frame(time);
   ui.click("pause-monitoring");
   assert.equal(ui.nodes.get("#pause-monitoring").disabled,true);
-  assert.equal(ui.nodes.get("#resume-monitoring").disabled,true);
+  assert.equal(ui.nodes.get("#resume-monitoring").disabled,false);
+  assert.equal(ui.nodes.get("#stop-monitoring").disabled,false);
+  ui.click("resume-monitoring");
+  assert.equal(ui.nodes.get("#resume-monitoring").disabled,false);
+  assert.match(ui.nodes.get("#monitoring-readiness").textContent, /Resume is unavailable/);
+  assert.match(ui.nodes.get("#session-status").textContent, /Paused by you/);
   for (let time = 4050; time <= 7100; time += 50) ui.frame(time);
   assert.equal(ui.nodes.get("#resume-monitoring").disabled,false);
   ui.click("resume-monitoring"); ui.frame(7150);
+  assert.equal(ui.nodes.get("#pause-monitoring").disabled,false);
+  assert.equal(ui.nodes.get("#stop-monitoring").disabled,false);
   assert.match(ui.nodes.get("#session-status").textContent,/Monitoring active/);
   ui.click("stop-monitoring");
+  assert.equal(ui.nodes.get("#pause-monitoring").disabled,true);
+  assert.equal(ui.nodes.get("#resume-monitoring").disabled,true);
+  assert.equal(ui.nodes.get("#stop-monitoring").disabled,true);
   assert.equal(ui.nodes.get("#tiredness-after").disabled,false);
   ui.nodes.get("#tiredness-after").value = "7";
   ui.nodes.get("#tiredness-after").dispatchEvent(new Event("change"));
@@ -273,6 +316,11 @@ test("Pause, Resume, Stop and a new session reuse one camera stream", async (t) 
   assert.match(ui.nodes.get("#rating-summary").textContent,/Before: not provided; After: not provided/);
   assert.equal(ui.nodes.get("#blink-count").textContent,"0");
   assert.equal(requests,1);
+});
+
+test("preview overlays cannot intercept pointer input intended for controls", async () => {
+  const css = await readFile(new URL("../dashboard/static/webcam.css", import.meta.url), "utf8");
+  assert.match(css, /#video-viewport, #video-viewport video, #alignment-guide, #alignment-guide::after, \.preview-label\s*\{[^}]*pointer-events:\s*none/s);
 });
 
 test("component teardown clears session measurements and self-reports", async (t) => {
@@ -299,6 +347,7 @@ test("tracking loss pauses an active session; recovery never automatically resum
   ui.frame(3100);
   assert.match(ui.nodes.get("#session-status").textContent,/Measurements paused/);
   assert.equal(ui.nodes.get("#head-pose").textContent,"—");
+  assert.equal(ui.nodes.get("#resume-monitoring").disabled,false);
   ui.detector.detectForVideo = validDetection;
   for (let time = 3150; time <= 6200; time += 50) ui.frame(time);
   assert.equal(ui.nodes.get("#resume-monitoring").disabled,false);

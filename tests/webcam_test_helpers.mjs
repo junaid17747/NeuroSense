@@ -14,6 +14,10 @@ export function face({ cx = 0.5, cy = 0.5, fill = 0.85, width = 640, height = 48
   const points = Array.from({ length: 478 }, () => ({ x: cx, y: cy }));
   points[0] = { x: cx - rx * fill, y: cy - ry * fill };
   points[1] = { x: cx + rx * fill, y: cy + ry * fill };
+  points[10] = { x: cx, y: cy - ry * fill };
+  points[152] = { x: cx, y: cy + ry * fill };
+  points[234] = { x: cx - rx * fill, y: cy };
+  points[454] = { x: cx + rx * fill, y: cy };
   const eyeWidth = rx * fill * .45;
   for (const [indices, offset, ear] of [[[33,160,158,133,153,144], -.5, leftEAR], [[362,385,387,263,373,380], .5, rightEAR]]) {
     const x = cx + rx * fill * offset, y = cy - ry * fill * .2;

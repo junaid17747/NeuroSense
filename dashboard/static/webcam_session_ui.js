@@ -3,7 +3,9 @@ export function renderBehaviorSession(select, session, now, ready) {
   const stats = session.snapshot(now), active = ["running", "paused", "quality_paused"].includes(stats.state);
   const format = (number, unit = "", digits = 1) => Number.isFinite(number) ? `${number.toFixed(digits)}${unit}` : "—";
   select("pause-monitoring").disabled = stats.state !== "running";
-  select("resume-monitoring").disabled = !["paused", "quality_paused"].includes(stats.state) || !ready;
+  // Resume remains actionable while paused; its handler explains any realignment
+  // requirement instead of presenting an inert control.
+  select("resume-monitoring").disabled = !["paused", "quality_paused"].includes(stats.state);
   select("stop-monitoring").disabled = !active;
   select("tiredness-before").disabled = active;
   select("tiredness-after").disabled = stats.state !== "stopped";

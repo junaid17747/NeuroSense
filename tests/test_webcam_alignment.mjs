@@ -26,6 +26,38 @@ test("distance thresholds reject both too close and too far", () => {
   assert.equal(evaluate({ faces: [face({ fill: ALIGNMENT.maxFill + .001 })] }).code, "too_close");
 });
 
+test("ordinary laptop framing passes across resolutions without mixing CSS and source coordinates", () => {
+  for (const [width, height] of [[640, 480], [1280, 720], [1920, 1080], [1024, 768]]) {
+    const guide = alignmentGuide(width, height);
+    // 70% of the normalized guide diameter is a typical face-sized target;
+    // the helper creates landmarks in normalized source-video coordinates.
+    const targetFill = .70;
+    const result = evaluate({ faces: [face({ width, height, fill: targetFill })], width, height });
+    assert.equal(result.aligned, true, `${width}x${height}`);
+    assert.equal(result.diagnostics.exactlyOneFace, true);
+    assert.equal(result.diagnostics.centered, true);
+    assert.equal(result.diagnostics.faceSize, true);
+    assert(Math.abs(guide.rx * width / (guide.ry * height) - .72) < 1e-9);
+  }
+});
+
+test("small ordinary-distance faces pass while genuinely distant or cropped faces fail clearly", () => {
+  for (const fill of [.46, .52, .70, .90, .94]) assert.equal(evaluate({ faces: [face({ fill })] }).aligned, true, `fill ${fill}`);
+  assert.equal(evaluate({ faces: [face({ fill: .44 })] }).code, "too_far");
+  assert.equal(evaluate({ faces: [face({ fill: .95 })] }).code, "too_close");
+});
+
+test("face size uses facial oval anchors rather than outlier landmarks", () => {
+  const landmarks = face();
+  landmarks[0] = { x: .5, y: .001 }; // Non-oval outlier must not change face size.
+  landmarks[1] = { x: .5, y: .999 };
+  assert.equal(evaluate({ faces: [landmarks] }).aligned, true);
+  assert.equal(evaluate({ faces: [[{ x: .5, y: .5 }]] }).code, "invalid");
+  const partlyOccluded = face();
+  partlyOccluded[454] = null;
+  assert.equal(evaluate({ faces: [partlyOccluded] }).code, "invalid");
+});
+
 test("centering boundaries are measured relative to the actual guide", () => {
   const guide = alignmentGuide(640, 480);
   for (const sign of [-1, 1]) {

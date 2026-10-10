@@ -33,6 +33,19 @@ distance, lighting, and rotation away from a frontal upright pose. Directions
 refer to movement within the mirrored preview. Light is sampled from the face
 region, or the central frame when there is no detected face.
 
+Face size uses normalized MediaPipe coordinates from the actual video frame and
+four facial-oval anchors (forehead, chin, and both cheeks), not the extrema of
+all 478 landmarks. This keeps iris, lip, and stray mesh points from changing the
+estimated face size. The preview viewport uses the video's intrinsic aspect
+ratio, so CSS pixels are not mixed with normalized source coordinates. The
+guide and checks share the same source-frame geometry; mirroring changes only
+horizontal corrective wording.
+
+The development diagnostics panel appears on localhost or with
+`?webcamDebug=1`. It reports camera/detector readiness, face count, centering,
+size, lighting, pose, timer progress, and the current blocker. It reports only
+pass/fail states and does not log or display raw landmarks or images.
+
 **Ready for Monitoring** requires 3 continuous seconds of successful checks on
 fresh frames plus a usable open-eye baseline. A visible progress bar resets when
 alignment is lost, video stalls, the tab is hidden, or the camera/model fails.
@@ -137,8 +150,8 @@ All positioning defaults are centralized in `ALIGNMENT` and covered by tests:
 | Alignment state-machine gap limit | 600 ms (behavioral checks impose the stricter limit below) |
 | Maximum behavioral sample gap / inference duration | 150 ms |
 | Detection cadence | Target up to 25 checks/second; fresh video frames only |
-| Center tolerance | 18% of the oval radius, per axis |
-| Face bounding-box fill | 68–104% of the oval width and height |
+| Center tolerance | 22% of the oval radius, per axis |
+| Face-anchor bounding-box fill | 45–94% of the oval width and height |
 | Head rotation | At most 20° from the canonical frontal pose |
 | Mean luminance | 45–220 on a 0–255 scale |
 | Under/overexposed pixels | At most 45% below 25 or above 245 |
@@ -171,6 +184,7 @@ rtk proxy node tests/test_webcam_camera.mjs
 The Streamlit navigation tests use a temporary authentication database and fixed
 sensor data, click the actual Overview button, verify page order and the return
 path, and check that signed-out or revoked sessions cannot access the webcam.
+They also check that a Streamlit rerun retains the same keyed webcam component.
 The JavaScript tests exercise pure alignment logic and the actual component with
 mocked browser media APIs and detector outputs. They cover geometry, direction,
 distance and pose limits, lighting, calibration timing, stale/hidden frames,

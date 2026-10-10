@@ -35,6 +35,8 @@ button:disabled { opacity: .45; cursor: default; }
 }
 #camera-placeholder { padding: 1.5rem; text-align: center; color: var(--ns-muted, #9eb4cf); }
 #video-viewport { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
+/* The preview is informational. It must never become a hit target over controls. */
+#video-viewport, #video-viewport video, #alignment-guide, #alignment-guide::after, .preview-label { pointer-events: none; }
 video { display: block; width: 100%; height: 100%; object-fit: contain; transform: scaleX(-1); }
 #alignment-guide {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -49,6 +51,12 @@ video { display: block; width: 100%; height: 100%; object-fit: contain; transfor
 .preview-label { position: absolute; top: 1rem; left: 1rem; padding: .3rem .5rem; color: #e8f4ff; background: #07142dcc; border-radius: 5px; font-size: .65rem; letter-spacing: .1em; }
 .alignment-feedback { padding-top: .4rem; }
 #alignment-message { min-height: 1.5em; color: var(--ns-ink, #e8f4ff); font-weight: 600; }
+#monitoring-readiness { min-height: 1.5em; color: var(--ns-muted, #9eb4cf); font-size: .9rem; }
+#alignment-diagnostics { margin-top: .75rem; padding: .65rem .8rem; border: 1px solid #48e7ff44; border-radius: 8px; color: var(--ns-muted, #9eb4cf); font-size: .8rem; }
+#alignment-diagnostics summary { cursor: pointer; color: var(--ns-cyan, #48e7ff); }
+#alignment-diagnostics dl { display: grid; grid-template-columns: minmax(12rem, auto) 1fr; gap: .3rem .8rem; margin: .7rem 0 0; }
+#alignment-diagnostics dt { font-weight: 600; }
+#alignment-diagnostics dd { margin: 0; color: var(--ns-ink, #e8f4ff); }
 .calibration-label { display: flex; justify-content: space-between; gap: 1rem; font-size: .85rem; }
 #calibration-value { color: var(--ns-cyan, #48e7ff); font-variant-numeric: tabular-nums; }
 progress { display: block; width: 100%; height: 8px; margin-top: .6rem; border: 0; border-radius: 20px; overflow: hidden; background: #040a1b; accent-color: #48e7ff; }

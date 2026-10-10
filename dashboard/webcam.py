@@ -44,6 +44,23 @@ webcam_preview = st.components.v2.component(
                 <button id="stop-monitoring" type="button" disabled>Stop Monitoring</button>
                 <button id="retry-alignment" type="button" hidden>Retry Alignment</button>
             </div>
+            <p id="monitoring-readiness" role="status" aria-live="polite" aria-atomic="true">
+                Start is unavailable. Enable the camera and complete alignment calibration.
+            </p>
+            <details id="alignment-diagnostics" hidden>
+                <summary>Development alignment diagnostics</summary>
+                <dl>
+                    <dt>Camera ready</dt><dd id="diag-camera">No</dd>
+                    <dt>Face detector ready</dt><dd id="diag-detector">No</dd>
+                    <dt>Exactly one face detected</dt><dd id="diag-one-face">No</dd>
+                    <dt>Face centered</dt><dd id="diag-centered">Waiting</dd>
+                    <dt>Face-size check</dt><dd id="diag-face-size">Waiting</dd>
+                    <dt>Lighting check</dt><dd id="diag-lighting">Waiting</dd>
+                    <dt>Head-pose check</dt><dd id="diag-head-pose">Waiting</dd>
+                    <dt>Stability timer</dt><dd id="diag-stability">0.0 / 3.0 s</dd>
+                    <dt>Current blocking reason</dt><dd id="diag-blocking">Enable the camera first.</dd>
+                </dl>
+            </details>
         </div>
         <p class="alignment-disclaimer">Alignment is a camera-positioning check. All session measurements
         are experimental behavioral indicators for adult wellness research. They do not measure brainwaves

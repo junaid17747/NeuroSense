@@ -6,6 +6,8 @@ export default function mountWebcam({ parentElement }) {
   const video = select("camera-video"), status = select("camera-status");
   const placeholder = select("camera-placeholder"), viewport = select("video-viewport");
   const guide = select("alignment-guide"), message = select("alignment-message");
+  const readiness = select("monitoring-readiness");
+  const diagnosticPanel = select("alignment-diagnostics");
   const progress = select("calibration-progress"), value = select("calibration-value");
   const start = select("start-monitoring"), retry = select("retry-alignment");
   const tracker = new AlignmentTracker();
@@ -15,8 +17,27 @@ export default function mountWebcam({ parentElement }) {
   let lastMetricsRender = -Infinity, lastSessionState = null, lastReady = null;
   const canvas = document.createElement("canvas");
   let stream = null, detector = null, pending = false, disposed = false;
+  let detectorState = "off";
   let requestId = 0, detectionId = 0, frameId = null, loadTimeout = null;
   let lastSample = -Infinity, lastVideoTime = -1, lastFreshFrame = null;
+  const diagnosticEnabled = new URLSearchParams(window.location?.search || "").get("webcamDebug") === "1" ||
+    ["localhost", "127.0.0.1", "::1"].includes(window.location?.hostname);
+  diagnosticPanel.hidden = !diagnosticEnabled;
+
+  function renderDiagnostics(check, state, reason) {
+    if (!diagnosticEnabled) return;
+    const show = (id, value) => { select(id).textContent = value; };
+    const yesNo = value => value === null || value === undefined ? "Waiting" : value ? "Pass" : "Fail";
+    show("diag-camera", stream && video.readyState >= 2 ? "Yes" : "No");
+    show("diag-detector", detectorState === "ready" ? "Yes" : detectorState === "failed" ? "No · Failed" : "No");
+    show("diag-one-face", yesNo(check?.diagnostics?.exactlyOneFace));
+    show("diag-centered", yesNo(check?.diagnostics?.centered));
+    show("diag-face-size", yesNo(check?.diagnostics?.faceSize));
+    show("diag-lighting", yesNo(check?.diagnostics?.lighting));
+    show("diag-head-pose", yesNo(check?.diagnostics?.headPose));
+    show("diag-stability", `${((state?.progress || 0) * ALIGNMENT.stableMs / 1000).toFixed(1)} / 3.0 s`);
+    show("diag-blocking", reason || "Ready");
+  }
 
   function showAlignment(text, tone = "neutral", state = tracker.snapshot(performance.now())) {
     if (message.textContent !== text) message.textContent = text;
@@ -24,10 +45,35 @@ export default function mountWebcam({ parentElement }) {
     progress.value = state.progress;
     value.textContent = `${Math.floor(state.progress * 100)}%`;
     progress.setAttribute("aria-valuetext", `${Math.floor(state.progress * 100)} percent; 3 seconds required`);
-    const ready = state.ready && eyeBaseline !== null;
-    start.disabled = !ready || !["idle", "stopped"].includes(session.state);
-    start.textContent = "Start Monitoring";
     const now = performance.now();
+    const sessionCanStart = ["idle", "stopped"].includes(session.state);
+    const ready = state.ready && eyeBaseline !== null;
+    const waiting = !stream ? "Enable the camera first."
+      : detectorState === "loading" ? "Face alignment is loading."
+      : detectorState === "failed" ? "Face alignment could not start; retry alignment."
+      : detectorState !== "ready" ? "Face alignment is not ready."
+      : document.hidden ? "Return to this page."
+      : lastFreshFrame === null || now - lastFreshFrame > BEHAVIOR.maxGapMs ? "Waiting for a fresh camera frame."
+      : !state.ready ? `Keep your face aligned for ${Math.max(0, Math.ceil((ALIGNMENT.stableMs - state.progress * ALIGNMENT.stableMs) / 1000))} more seconds.`
+      : eyeBaseline === null ? "Keep both eyes comfortably open to finish eye calibration."
+      : null;
+    const reason = ["paused", "quality_paused"].includes(session.state)
+      ? waiting ? `Resume is unavailable. ${waiting}` : "Ready. Resume Monitoring is available."
+      : session.state === "running" ? "Monitoring is active. Pause and Stop are available."
+      : !sessionCanStart ? `Start is unavailable while monitoring is ${session.state.replace("_", " ")}.`
+      : !stream ? "Start is unavailable. Enable the camera first."
+      : detectorState === "loading" ? "Start is unavailable. Face alignment is loading."
+      : detectorState === "failed" ? "Start is unavailable. Face alignment could not start; retry alignment."
+      : detectorState !== "ready" ? "Start is unavailable. Face alignment is not ready."
+      : document.hidden ? "Start is unavailable while this page is hidden. Return to the page."
+      : lastFreshFrame === null || now - lastFreshFrame > BEHAVIOR.maxGapMs ? "Start is unavailable. Waiting for a fresh camera frame."
+      : !state.ready ? `Start is unavailable. Keep your face aligned for ${Math.max(0, Math.ceil((ALIGNMENT.stableMs - state.progress * ALIGNMENT.stableMs) / 1000))} more seconds.`
+      : eyeBaseline === null ? "Alignment is stable. Keep both eyes comfortably open to finish eye calibration."
+      : "Ready. Start Monitoring is available.";
+    start.disabled = reason !== "Ready. Start Monitoring is available.";
+    readiness.textContent = reason;
+    start.setAttribute("aria-describedby", "monitoring-readiness");
+    start.textContent = "Start Monitoring";
     if (now - lastMetricsRender >= 200 || session.state !== lastSessionState || ready !== lastReady) {
       renderBehaviorSession(select, session, now, ready);
       lastMetricsRender = now; lastSessionState = session.state; lastReady = ready;
@@ -39,6 +85,7 @@ export default function mountWebcam({ parentElement }) {
     calibration.reset();
     eyeBaseline = null;
     showAlignment(text, tone);
+    renderDiagnostics(null, tracker.snapshot(performance.now()), text);
   }
 
   function pauseForQuality(text) {
@@ -59,6 +106,7 @@ export default function mountWebcam({ parentElement }) {
     loadTimeout = null;
     closeDetector(detector);
     detector = null;
+    if (detectorState !== "failed") detectorState = "off";
     lastSample = -Infinity;
     lastVideoTime = -1;
     lastFreshFrame = null;
@@ -82,6 +130,8 @@ export default function mountWebcam({ parentElement }) {
     enable.disabled = false;
     disable.disabled = true;
     status.textContent = text;
+    showAlignment("Camera positioning has not started.");
+    renderDiagnostics(null, tracker.snapshot(performance.now()), text);
   }
 
   function resizeGuide() {
@@ -111,7 +161,9 @@ export default function mountWebcam({ parentElement }) {
   }
 
   function detectionError(text) {
+    detectorState = "failed";
     stopDetection();
+    detectorState = "failed";
     resetAlignment(text, "warning");
     retry.hidden = false;
   }
@@ -140,7 +192,10 @@ export default function mountWebcam({ parentElement }) {
         if (session.state === "running") {
           session.sample({ eyes, pose: estimateHeadPose(matrix), valid: quality.valid, reason: `Measurements paused: ${quality.reason} Realign, then click Resume.` }, now);
           if (session.state !== "running") resetAlignment(quality.valid ? session.reason : quality.reason, "warning");
-          else showAlignment("Monitoring active · Experimental behavioral indicators", "success");
+          else {
+            showAlignment("Monitoring active · Experimental behavioral indicators", "success");
+            renderDiagnostics(check, tracker.snapshot(now), quality.valid ? "Monitoring active" : quality.reason);
+          }
         } else {
           const aligned = check.aligned && quality.valid;
           const state = tracker.update(aligned, now);
@@ -153,6 +208,9 @@ export default function mountWebcam({ parentElement }) {
             : state.ready ? "Keep eyes comfortably open; reduce glasses glare to finish eye calibration."
             : "Aligned — hold still with eyes comfortably open for 3 seconds.";
           showAlignment(text, aligned ? "success" : check.code === "no_face" ? "neutral" : "warning", state);
+          renderDiagnostics(check, state, !quality.valid ? quality.reason : !check.aligned ? check.message
+            : state.ready && !eyeBaseline ? "Keep both eyes comfortably open to finish eye calibration."
+            : state.ready ? "Ready" : "Hold this position until the 3-second timer completes.");
         }
       } else if (lastFreshFrame === null || now - lastFreshFrame > BEHAVIOR.maxGapMs) {
         pauseForQuality("Waiting for fresh camera frames. Measurement is unavailable.");
@@ -166,6 +224,7 @@ export default function mountWebcam({ parentElement }) {
   async function beginDetection() {
     if (!stream || disposed) return;
     stopDetection();
+    detectorState = "loading";
     const current = detectionId;
     resetAlignment("Loading face alignment model…");
     loadTimeout = setTimeout(() => {
@@ -177,6 +236,8 @@ export default function mountWebcam({ parentElement }) {
       clearTimeout(loadTimeout);
       loadTimeout = null;
       detector = loaded;
+      detectorState = "ready";
+      showAlignment("Face alignment is ready. Center your face to begin calibration.");
       frameId = requestAnimationFrame(tick);
     } catch {
       if (disposed || current !== detectionId) return;
@@ -233,7 +294,7 @@ export default function mountWebcam({ parentElement }) {
   const startMonitoring = () => {
     const now = performance.now();
     if (!stream || !detector || document.hidden || !eyeBaseline || lastFreshFrame === null || now - lastFreshFrame > BEHAVIOR.maxGapMs || !tracker.start(now)) {
-      resetAlignment("Align your face for 3 seconds before starting.");
+      showAlignment("Monitoring cannot start yet. Follow the readiness instructions below.", "warning");
       return;
     }
     if (!session.start(now, Date.now(), eyeBaseline, select("tiredness-before").value)) return;
@@ -246,7 +307,10 @@ export default function mountWebcam({ parentElement }) {
   };
   const resumeMonitoring = () => {
     const now = performance.now();
-    if (!eyeBaseline || !stream || !detector || document.hidden || lastFreshFrame === null || now - lastFreshFrame > BEHAVIOR.maxGapMs || !tracker.start(now)) return;
+    if (!eyeBaseline || !stream || !detector || document.hidden || lastFreshFrame === null || now - lastFreshFrame > BEHAVIOR.maxGapMs || !tracker.start(now)) {
+      showAlignment("Resume is unavailable. Realign your face and wait for the readiness message.", "warning");
+      return;
+    }
     if (session.resume(now, eyeBaseline)) showAlignment("Monitoring active · Experimental behavioral indicators", "success");
   };
   const stopMonitoring = () => {
