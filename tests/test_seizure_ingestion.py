@@ -268,6 +268,8 @@ class IngestionTests(unittest.TestCase):
             self.assertEqual(item.signal.sha256, sha((self.root / item.signal.relative_path).read_bytes()))
             self.assertEqual(item.recording.provenance.annotation_sha256,
                              sha((self.root / item.annotations.relative_path).read_bytes()))
+            self.assertEqual(item.recording.provenance.annotation_provenance_ref,
+                             "TEST_ONLY_expert_annotation_provenance")
         self.assertEqual(len(build_split_manifest(records).assignments), 3)
         validate_manifest(self.root, result.manifest)
 

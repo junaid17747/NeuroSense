@@ -10,9 +10,16 @@ export default function mountWebcam({ parentElement }) {
   const diagnosticPanel = select("alignment-diagnostics");
   const progress = select("calibration-progress"), value = select("calibration-value");
   const start = select("start-monitoring"), retry = select("retry-alignment");
+  const rppgEnabled = select("rppg-enabled");
   const tracker = new AlignmentTracker();
   const calibration = new EyeCalibration();
   const session = new BehavioralSession();
+  const rppg = new RPPGProcessor();
+  const referenceRows = [];
+  const rppgCanvas = document.createElement("canvas");
+  rppgCanvas.width = 160;
+  rppgCanvas.height = 120;
+  const rppgContext = rppgCanvas.getContext("2d", { willReadFrequently: true });
   let eyeBaseline = null;
   let lastMetricsRender = -Infinity, lastSessionState = null, lastReady = null;
   const canvas = document.createElement("canvas");
@@ -20,9 +27,68 @@ export default function mountWebcam({ parentElement }) {
   let detectorState = "off";
   let requestId = 0, detectionId = 0, frameId = null, loadTimeout = null;
   let lastSample = -Infinity, lastVideoTime = -1, lastFreshFrame = null;
+  let lastRppgSample = -Infinity;
   const diagnosticEnabled = new URLSearchParams(window.location?.search || "").get("webcamDebug") === "1" ||
     ["localhost", "127.0.0.1", "::1"].includes(window.location?.hostname);
   diagnosticPanel.hidden = !diagnosticEnabled;
+
+  function renderRppg(snapshot = rppg.snapshot()) {
+    const enabled = rppgEnabled.checked;
+    const sampling = enabled && !!stream && session.state === "running";
+    select("rppg-bpm").textContent = sampling && snapshot.bpm !== null ? `${snapshot.bpm} BPM` : "Unavailable";
+    select("rppg-quality").textContent = sampling ? snapshot.quality : "Unavailable";
+    select("rppg-progress").textContent = enabled ? `${(snapshot.progress * RPPG.minWindowSeconds).toFixed(1)} / ${RPPG.minWindowSeconds} s` : `0 / ${RPPG.minWindowSeconds} s`;
+    select("rppg-duration").textContent = enabled ? `${snapshot.durationSeconds.toFixed(1)} s` : "0.0 s";
+    select("rppg-coverage").textContent = enabled ? `${snapshot.coverage}%` : "0%";
+    select("rppg-source").textContent = enabled ? "WEBCAM_RPPG_EXPERIMENTAL" : "UNAVAILABLE";
+    const reason = !enabled ? "Disabled. No rPPG frames are being sampled."
+      : !stream ? "Enable the camera to begin."
+      : session.state === "quality_paused" || session.state === "paused" ? `${session.reason} rPPG sampling is paused and its buffer is cleared.`
+      : session.state === "stopped" ? "Monitoring stopped. Start a new session to collect a fresh pulse window."
+      : session.state !== "running" ? "Pulse sampling begins only while Monitoring is active."
+      : snapshot.reason || "Pulse signal available for experimental review.";
+    select("rppg-reason").textContent = reason;
+    return snapshot;
+  }
+
+  function resetRppg(reason) {
+    lastRppgSample = -Infinity;
+    rppgCanvas.width = 0;
+    rppgCanvas.height = 0;
+    rppg.reset(reason);
+    renderRppg();
+  }
+
+  function sampleRppg(faces, bounds, check, quality, now) {
+    if (!rppgEnabled.checked || session.state !== "running") return;
+    if (now - lastRppgSample < RPPG.sampleIntervalMs) return;
+    lastRppgSample = now;
+    let reason = "";
+    if (faces.length !== 1) reason = faces.length > 1 ? "Only one face can be tracked for pulse sampling." : "Face tracking lost.";
+    else if (!check.aligned) reason = check.diagnostics?.lighting === false ? check.message : "Please center your face and remain still.";
+    else if (!quality.valid) reason = quality.reason;
+    else if (!rppgContext) reason = "Local frame sampling is unavailable in this browser.";
+    if (reason) {
+      renderRppg(rppg.invalidate(reason));
+      return;
+    }
+    try {
+      const polygons = faceSkinPolygons(faces[0]);
+      if (!polygons) { renderRppg(rppg.invalidate("Facial skin regions could not be tracked.")); return; }
+      if (rppgCanvas.width !== 96 || rppgCanvas.height !== 72) {
+        rppgCanvas.width = 96;
+        rppgCanvas.height = 72;
+      }
+      rppgContext.drawImage(video, 0, 0, rppgCanvas.width, rppgCanvas.height);
+      const pixels = rppgContext.getImageData(0, 0, rppgCanvas.width, rppgCanvas.height).data;
+      const extracted = extractSkinRgb(pixels, rppgCanvas.width, rppgCanvas.height, polygons);
+      if (!extracted.valid) { renderRppg(rppg.invalidate(extracted.reason)); return; }
+      const state = rppg.add({ time: now, videoTime: video.currentTime, regions: extracted.regions, bounds, valid: true });
+      renderRppg(state);
+    } catch {
+      renderRppg(rppg.invalidate("Local pulse signal processing failed."));
+    }
+  }
 
   function renderDiagnostics(check, state, reason) {
     if (!diagnosticEnabled) return;
@@ -90,6 +156,7 @@ export default function mountWebcam({ parentElement }) {
 
   function pauseForQuality(text) {
     session.pause(performance.now(), `Measurements paused: ${text} Realign, then click Resume.`, true);
+    resetRppg(`Monitoring paused: ${text} The pulse window was cleared.`);
     resetAlignment(text, "warning");
   }
 
@@ -110,6 +177,7 @@ export default function mountWebcam({ parentElement }) {
     lastSample = -Infinity;
     lastVideoTime = -1;
     lastFreshFrame = null;
+    resetRppg("Camera is off; temporary pulse samples were cleared.");
     canvas.width = 0;
     canvas.height = 0;
     retry.hidden = true;
@@ -131,6 +199,7 @@ export default function mountWebcam({ parentElement }) {
     disable.disabled = true;
     status.textContent = text;
     showAlignment("Camera positioning has not started.");
+    renderRppg();
     renderDiagnostics(null, tracker.snapshot(performance.now()), text);
   }
 
@@ -191,8 +260,12 @@ export default function mountWebcam({ parentElement }) {
         lastFreshFrame = now;
         if (session.state === "running") {
           session.sample({ eyes, pose: estimateHeadPose(matrix), valid: quality.valid, reason: `Measurements paused: ${quality.reason} Realign, then click Resume.` }, now);
-          if (session.state !== "running") resetAlignment(quality.valid ? session.reason : quality.reason, "warning");
+          if (session.state !== "running") {
+            resetRppg(`Monitoring paused: ${quality.reason} The pulse window was cleared.`);
+            resetAlignment(quality.valid ? session.reason : quality.reason, "warning");
+          }
           else {
+            sampleRppg(faces, faces.length === 1 ? faceBounds(faces[0]) : null, check, quality, now);
             showAlignment("Monitoring active · Experimental behavioral indicators", "success");
             renderDiagnostics(check, tracker.snapshot(now), quality.valid ? "Monitoring active" : quality.reason);
           }
@@ -298,11 +371,13 @@ export default function mountWebcam({ parentElement }) {
       return;
     }
     if (!session.start(now, Date.now(), eyeBaseline, select("tiredness-before").value)) return;
+    resetRppg("Collecting pulse signal — please remain still.");
     select("tiredness-after").value = "";
     showAlignment("Monitoring active · Experimental behavioral indicators", "success");
   };
   const pauseMonitoring = () => {
     session.pause(performance.now());
+    resetRppg("Monitoring paused; rPPG sampling stopped and the pulse window was cleared.");
     resetAlignment("Paused. Realign with eyes comfortably open before resuming.");
   };
   const resumeMonitoring = () => {
@@ -311,16 +386,54 @@ export default function mountWebcam({ parentElement }) {
       showAlignment("Resume is unavailable. Realign your face and wait for the readiness message.", "warning");
       return;
     }
-    if (session.resume(now, eyeBaseline)) showAlignment("Monitoring active · Experimental behavioral indicators", "success");
+    if (session.resume(now, eyeBaseline)) {
+      resetRppg("Collecting pulse signal — please remain still.");
+      showAlignment("Monitoring active · Experimental behavioral indicators", "success");
+    }
   };
   const stopMonitoring = () => {
     session.stop(performance.now());
+    resetRppg("Monitoring stopped; the pulse window was cleared.");
     select("tiredness-before").value = "";
     resetAlignment("Session stopped. You may enter an optional after-session tiredness rating.");
   };
   const afterRatingChanged = () => {
     session.setAfter(select("tiredness-after").value);
     renderBehaviorSession(select, session, performance.now(), !!eyeBaseline && tracker.ready);
+  };
+  const rppgChanged = () => {
+    resetRppg(rppgEnabled.checked ? "Pulse sampling begins only while Monitoring is active." : "Disabled. No rPPG frames are being sampled.");
+  };
+  const recordReference = () => {
+    const source = select("rppg-reference-source").value.trim();
+    const referenceBpm = Number(select("rppg-reference-bpm").value);
+    if (!source || !Number.isFinite(referenceBpm) || referenceBpm < 25 || referenceBpm > 250) {
+      select("rppg-reference-summary").textContent = "Enter a reference source and a BPM value from 25 to 250.";
+      return;
+    }
+    const estimate = rppg.snapshot();
+    const row = { timestamp: new Date().toISOString(), referenceSource: source, referenceBpm,
+      rppgBpm: estimate.bpm, absoluteError: estimate.bpm === null ? null : Math.abs(estimate.bpm - referenceBpm),
+      quality: estimate.quality, observationSeconds: estimate.durationSeconds, coveragePercent: estimate.coverage,
+      lighting: select("rppg-reference-light").value, motion: select("rppg-reference-motion").value };
+    referenceRows.push(row);
+    const metrics = compareReferenceMeasurements(referenceRows);
+    const valid = metrics.count, failed = referenceRows.length - valid;
+    select("rppg-reference-summary").textContent = `${referenceRows.length} paired observations · ${valid} valid · ${failed} unavailable · valid coverage ${(metrics.validCoverage * 100).toFixed(0)}%` +
+      (valid ? ` · MAE ${metrics.mae.toFixed(1)} BPM · RMSE ${metrics.rmse.toFixed(1)} BPM · bias ${metrics.bias.toFixed(1)} BPM` : "");
+    select("rppg-export-reference").disabled = false;
+  };
+  const exportReference = () => {
+    if (!referenceRows.length) return;
+    const columns = ["timestamp", "referenceSource", "referenceBpm", "rppgBpm", "absoluteError", "quality", "observationSeconds", "coveragePercent", "lighting", "motion"];
+    const quote = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
+    const csv = [columns.join(","), ...referenceRows.map(row => columns.map(key => quote(row[key])).join(","))].join("\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url; link.download = "neurosense-rppg-reference-validation.csv";
+    document.body.appendChild(link);
+    link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
   const visibilityChanged = () => {
     if (document.hidden && stream) pauseForQuality("Return to this tab to align your face.");
@@ -332,6 +445,9 @@ export default function mountWebcam({ parentElement }) {
   select("resume-monitoring").addEventListener("click", resumeMonitoring);
   select("stop-monitoring").addEventListener("click", stopMonitoring);
   select("tiredness-after").addEventListener("change", afterRatingChanged);
+  rppgEnabled.addEventListener("change", rppgChanged);
+  select("rppg-record-reference").addEventListener("click", recordReference);
+  select("rppg-export-reference").addEventListener("click", exportReference);
   retry.addEventListener("click", beginDetection);
   video.addEventListener("resize", resizeGuide);
   document.addEventListener("visibilitychange", visibilityChanged);
@@ -352,6 +468,10 @@ export default function mountWebcam({ parentElement }) {
     select("resume-monitoring").removeEventListener("click", resumeMonitoring);
     select("stop-monitoring").removeEventListener("click", stopMonitoring);
     select("tiredness-after").removeEventListener("change", afterRatingChanged);
+    rppgEnabled.removeEventListener("change", rppgChanged);
+    select("rppg-record-reference").removeEventListener("click", recordReference);
+    select("rppg-export-reference").removeEventListener("click", exportReference);
+    referenceRows.length = 0;
     retry.removeEventListener("click", beginDetection);
     video.removeEventListener("resize", resizeGuide);
     document.removeEventListener("visibilitychange", visibilityChanged);

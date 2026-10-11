@@ -26,7 +26,7 @@ if "test_components_registered" not in st.session_state:
 
 snapshot = {
     "heart_rate": 72, "motion_level": 0.2, "fusion_score": 80,
-    "state": "Focused", "sensor_mode": "simulation",
+    "state": "Focused", "sensor_mode": "simulation", "heart_rate_source": "SIMULATED_HEART_RATE",
     "eeg_quality": {"quality": 0.95, "status": "good"},
     "signal_status": {"status": "good", "allow_prediction": True},
 }
@@ -58,6 +58,7 @@ class WebcamNavigationTests(unittest.TestCase):
     def test_overview_button_opens_webcam_page_and_back_preserves_history(self):
         self.sign_in()
         self.assertEqual(self.app.title[0].value, "Overview")
+        self.assertTrue(any("SIMULATED_HEART_RATE" in metric.label for metric in self.app.metric))
         elements = list(self.app.main)
         button = self.app.button(key="start_webcam_monitoring")
         attention_metrics = [m for m in self.app.metric if "Attention" in m.label]

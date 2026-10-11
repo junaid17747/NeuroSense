@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { frontalMatrix, face } from "./webcam_test_helpers.mjs";
 
-const source = (await Promise.all(["webcam_alignment.js", "webcam_behavior.js", "webcam_session_ui.js", "webcam.js"].map(name =>
+const source = (await Promise.all(["webcam_alignment.js", "webcam_behavior.js", "webcam_rppg.js", "webcam_session_ui.js", "webcam.js"].map(name =>
   readFile(new URL(`../dashboard/static/${name}`, import.meta.url), "utf8")))).join("\n");
 const detectorStub = "let factory; export function setFactory(value) { factory = value; } function createFaceDetector() { return factory(); }\n";
 const { default: mountWebcam, setFactory } = await import(`data:text/javascript;base64,${Buffer.from(detectorStub + source).toString("base64")}`);
@@ -20,7 +20,10 @@ function setup(t, getUserMedia, loadDetector, location = { hostname: "example.te
   const nodes = new Map();
   for (const id of ["enable-camera", "disable-camera", "camera-video", "camera-status", "camera-placeholder",
     "video-viewport", "alignment-guide", "alignment-message", "calibration-progress", "calibration-value", "start-monitoring", "retry-alignment",
-    "pause-monitoring", "resume-monitoring", "stop-monitoring", "tiredness-before", "tiredness-after", "session-status",
+    "pause-monitoring", "resume-monitoring", "stop-monitoring", "tiredness-before", "tiredness-after", "session-status", "rppg-enabled",
+    "rppg-bpm", "rppg-quality", "rppg-progress", "rppg-duration", "rppg-coverage", "rppg-source", "rppg-reason",
+    "rppg-reference-source", "rppg-reference-bpm", "rppg-reference-light", "rppg-reference-motion",
+    "rppg-record-reference", "rppg-export-reference", "rppg-reference-summary",
     "monitoring-readiness",
     "alignment-diagnostics", "diag-camera", "diag-detector", "diag-one-face", "diag-centered", "diag-face-size",
     "diag-lighting", "diag-head-pose", "diag-stability", "diag-blocking",
@@ -38,9 +41,18 @@ function setup(t, getUserMedia, loadDetector, location = { hostname: "example.te
   const detector = { closed: false, detectForVideo: () => ({ faceLandmarks: [face()], facialTransformationMatrixes: [frontalMatrix] }) };
   detector.close = () => { detector.closed = true; };
   setFactory(loadDetector || (async () => detector));
-  const canvas = { width: 0, height: 0, getContext: () => ({ drawImage: () => {}, getImageData: () => ({ data: new Uint8ClampedArray([128, 128, 128, 255]) }) }) };
+  const canvases = [];
+  const createCanvas = () => {
+    const canvas = { width: 0, height: 0, getContext: () => ({ drawImage: () => {}, getImageData: (_x, _y, width, height) => {
+      const data = new Uint8ClampedArray(width * height * 4);
+      for (let i = 0; i < data.length; i += 4) { data[i] = 128; data[i + 1] = 132; data[i + 2] = 126; data[i + 3] = 255; }
+      return { data };
+    } }) };
+    canvases.push(canvas); return canvas;
+  };
+  const canvas = createCanvas();
   const document = new EventTarget();
-  document.createElement = () => canvas;
+  document.createElement = createCanvas;
   document.hidden = false;
   let now = 0, nextId = 1;
   const frames = new Map(), timers = new Map();
@@ -65,7 +77,7 @@ function setup(t, getUserMedia, loadDetector, location = { hostname: "example.te
   });
   const cleanup = mountWebcam({ parentElement: { querySelector: (id) => nodes.get(id) } });
   return {
-    nodes, cleanup, window, document, detector, canvas, frames, timers,
+    nodes, cleanup, window, document, detector, canvas, canvases, frames, timers,
     frame: (time, fresh = true) => {
       now = time;
       if (fresh) video.currentTime += .125;
@@ -97,6 +109,64 @@ test("mounting never requests a camera, even with permission already granted", a
   ui.click("disable-camera");
   assert.equal(stream.track.stopped, true);
   assert.equal(ui.nodes.get("#camera-video").srcObject, null);
+});
+
+test("rPPG opt-in remains separate from the simulated sensor path and clears on camera shutdown", async (t) => {
+  const stream = fakeStream();
+  const ui = setup(t, async () => stream);
+  const enabled = ui.nodes.get("#rppg-enabled");
+  assert.equal(ui.nodes.get("#rppg-source").textContent, "UNAVAILABLE");
+  enabled.checked = true; enabled.dispatchEvent(new Event("change"));
+  assert.equal(ui.nodes.get("#rppg-source").textContent, "WEBCAM_RPPG_EXPERIMENTAL");
+  assert.equal(ui.nodes.get("#rppg-bpm").textContent, "Unavailable");
+  assert.match(ui.nodes.get("#rppg-reason").textContent, /Enable the camera/);
+  ui.click("enable-camera"); await settle();
+  ui.click("disable-camera");
+  assert.equal(ui.nodes.get("#rppg-bpm").textContent, "Unavailable");
+  assert.match(ui.nodes.get("#rppg-reason").textContent, /Enable the camera/);
+  enabled.checked = false; enabled.dispatchEvent(new Event("change"));
+  assert.equal(ui.nodes.get("#rppg-source").textContent, "UNAVAILABLE");
+});
+
+test("rPPG sampling is opt-in, active-session only, and buffers are cleared on pause and stop", async (t) => {
+  const ui = setup(t, async () => fakeStream());
+  ui.click("enable-camera"); await settle();
+  for (let time = 0; time <= 3000; time += 50) ui.frame(time);
+  ui.click("start-monitoring");
+  const rppgCanvas = ui.canvases[1];
+  assert.equal(rppgCanvas.width, 0);
+  assert.equal(ui.nodes.get("#rppg-source").textContent, "UNAVAILABLE");
+  const checkbox = ui.nodes.get("#rppg-enabled");
+  checkbox.checked = true; checkbox.dispatchEvent(new Event("change"));
+  ui.frame(3050);
+  assert.equal(ui.nodes.get("#rppg-source").textContent, "WEBCAM_RPPG_EXPERIMENTAL");
+  assert.match(ui.nodes.get("#rppg-progress").textContent, /0\.0 \/ 25 s/);
+  ui.click("pause-monitoring");
+  assert.match(ui.nodes.get("#rppg-reason").textContent, /rPPG sampling is paused/);
+  assert.equal(ui.nodes.get("#rppg-bpm").textContent, "Unavailable");
+  ui.click("stop-monitoring");
+  assert.match(ui.nodes.get("#rppg-reason").textContent, /Monitoring stopped/);
+});
+
+test("optional reference entry counts unavailable attempts and keeps them browser-local", (t) => {
+  const ui = setup(t, async () => fakeStream());
+  ui.nodes.get("#rppg-reference-source").value = "Pulse oximeter";
+  ui.nodes.get("#rppg-reference-bpm").value = "74";
+  ui.click("rppg-record-reference");
+  assert.match(ui.nodes.get("#rppg-reference-summary").textContent, /1 paired observations · 0 valid · 1 unavailable · valid coverage 0%/);
+  assert.equal(ui.nodes.get("#rppg-export-reference").disabled, false);
+});
+
+test("camera disconnection releases rPPG resources and reports no estimate", async (t) => {
+  const stream = fakeStream(), ui = setup(t, async () => stream);
+  ui.nodes.get("#rppg-enabled").checked = true;
+  ui.nodes.get("#rppg-enabled").dispatchEvent(new Event("change"));
+  ui.click("enable-camera"); await settle();
+  stream.track.dispatchEvent(new Event("ended"));
+  assert.equal(ui.nodes.get("#camera-video").srcObject, null);
+  assert.equal(ui.canvases[1].width, 0);
+  assert.equal(ui.nodes.get("#rppg-bpm").textContent, "Unavailable");
+  assert.match(ui.nodes.get("#rppg-reason").textContent, /Enable the camera/);
 });
 
 test("denied permission leaves camera off and supports an explicit retry", async (t) => {
@@ -225,6 +295,7 @@ test("cleanup cancels detection, clears pixels and closes the model", async (t) 
   assert.equal(ui.frames.size, 0);
   assert.equal(ui.timers.size, 0);
   assert.equal(ui.canvas.width, 0);
+  assert.equal(ui.canvases[1].width, 0);
   assert.equal(ui.nodes.get("#calibration-progress").value, 0);
 });
 

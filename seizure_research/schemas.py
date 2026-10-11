@@ -136,6 +136,10 @@ class DatasetProvenance(ResearchSchema):
     signal_sha256: SHA256
     annotation_sha256: SHA256
     annotation_source: Text
+    # Human-verified evidence about who produced the reference labels and under
+    # what annotation protocol. This is a review reference, not a claim of
+    # clinical ground truth.
+    annotation_provenance_ref: Text | None = None
 
 
 class SeizureAnnotation(TimeInterval):

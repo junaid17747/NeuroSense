@@ -21,6 +21,39 @@ webcam_preview = st.components.v2.component(
             <button id="disable-camera" type="button" disabled>Disable Camera</button>
         </div>
         <p id="camera-status" role="status" aria-live="polite">Camera is off.</p>
+        <section class="rppg-panel" aria-labelledby="rppg-heading">
+            <div>
+                <span class="alignment-kicker">EXPERIMENTAL · OPT IN</span>
+                <h3 id="rppg-heading">Experimental Webcam Pulse (rPPG)</h3>
+                <p class="alignment-hint">Uses local facial skin-color changes while monitoring is active. Research-only; not a medical heart-rate measurement.</p>
+            </div>
+            <label class="rppg-opt-in"><input id="rppg-enabled" type="checkbox"> Enable experimental pulse estimation</label>
+            <div class="rppg-results" aria-live="polite" aria-atomic="true">
+                <div><span>Estimated pulse</span><strong id="rppg-bpm">Unavailable</strong></div>
+                <div><span>Signal quality</span><strong id="rppg-quality">Unavailable</strong></div>
+                <div><span>Warm-up</span><strong id="rppg-progress">0 / 25 s</strong></div>
+                <div><span>Observation window</span><strong id="rppg-duration">0.0 s</strong></div>
+                <div><span>Sampling coverage</span><strong id="rppg-coverage">0%</strong></div>
+                <div><span>Data source</span><strong id="rppg-source">UNAVAILABLE</strong></div>
+            </div>
+            <p id="rppg-reason" role="status">Enable the camera and monitoring, then opt in to collect a local pulse signal.</p>
+            <p class="rppg-disclaimer">REAL WEBCAM rPPG · No frames or raw color traces are uploaded or retained. Experimental wellness research only; not ECG, diagnosis, or an emergency monitor.</p>
+            <details class="rppg-reference">
+                <summary>Optional reference-device validation (kept in this browser session)</summary>
+                <div class="rppg-reference-inputs">
+                    <label>Reference device/source <input id="rppg-reference-source" type="text" maxlength="100" placeholder="e.g. pulse oximeter"></label>
+                    <label>Reference pulse (BPM) <input id="rppg-reference-bpm" type="number" min="25" max="250" step="1"></label>
+                    <label>Lighting condition <select id="rppg-reference-light"><option>Normal indoor</option><option>Dim</option><option>Bright / glare</option></select></label>
+                    <label>Motion condition <select id="rppg-reference-motion"><option>Still</option><option>Small movement</option><option>Frequent movement</option></select></label>
+                </div>
+                <div class="webcam-controls">
+                    <button id="rppg-record-reference" type="button">Record paired observation</button>
+                    <button id="rppg-export-reference" type="button" disabled>Export local CSV</button>
+                </div>
+                <p id="rppg-reference-summary" role="status">No paired reference observations in this session.</p>
+                <p class="alignment-hint">Entries are temporary, stay in memory in this browser component, and are cleared on navigation. Export is an explicit local download.</p>
+            </details>
+        </section>
         <div class="webcam-stage">
             <p id="camera-placeholder">Enable your camera to begin the positioning check.</p>
             <div id="video-viewport" hidden>
@@ -115,6 +148,6 @@ webcam_preview = st.components.v2.component(
     # Streamlit serves one inline ES module; compose local modules without
     # relative browser imports or a separate frontend build toolchain.
     js="\n".join((STATIC / name).read_text(encoding="utf-8") for name in (
-        "webcam_alignment.js", "webcam_behavior.js", "webcam_session_ui.js", "webcam_detector.js", "webcam.js",
+        "webcam_alignment.js", "webcam_behavior.js", "webcam_rppg.js", "webcam_session_ui.js", "webcam_detector.js", "webcam.js",
     )),
 )

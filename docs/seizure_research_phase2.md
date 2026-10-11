@@ -250,13 +250,14 @@ cross-format reconciliation are still needed if a study requires both sources.
   audit finding, not a separately approved partial cohort.
 
 The manifest stores the full reviewed plan, adapter/pipeline versions, source
-relative paths/sizes and computed digests, per-record review digests, and Phase 1
-recordings. It stores no source root, wall-clock run time, raw EDF header identity,
-signal samples, or raw summary text. Audit provenance records Python/Pydantic
-versions. Input recording and identity-map order are canonicalized; physical
-channel order is preserved. Canonical JSON and SHA-256 produce reproducible
-artifacts for unchanged files, reviews, code, and runtime. Relocating the same
-files under another root does not change output.
+relative paths/sizes and computed digests, annotation-provenance review
+references, per-record review digests, and Phase 1 recordings. It stores no
+source root, wall-clock run time, raw EDF header identity, signal samples, or
+raw summary text. Audit provenance records Python/Pydantic versions. Input
+recording and identity-map order are canonicalized; physical channel order is
+preserved. Canonical JSON and SHA-256 produce reproducible artifacts for
+unchanged files, reviews, code, and runtime. Relocating the same files under
+another root does not change output.
 
 `validate_manifest(root, manifest)` re-reads the source files and reapplies all
 reviews/checks before comparing the full manifest. Run it before using a saved

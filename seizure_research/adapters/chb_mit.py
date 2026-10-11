@@ -238,6 +238,7 @@ class CHBMITAdapter:
                 dataset_id="chb_mit", version=plan.dataset_version, source_url=SOURCE_URL,
                 source_recording_id=item.edf_path, signal_sha256=edf.sha256,
                 annotation_sha256=summary_sha, annotation_source=item.summary_path,
+                annotation_provenance_ref=item.annotation_provenance_ref,
             ),
             duration_seconds=edf.duration_seconds, annotation_coverage=item.annotation_coverage,
             annotation_protocol_ref=item.annotation_protocol_ref,

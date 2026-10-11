@@ -150,7 +150,9 @@ def _sensor_snapshot() -> dict:
     result = {
         "sensor_data": sensor_data, "time": time_axis, "raw_eeg": raw_eeg,
         "filtered_eeg": filtered_eeg, "heart_rate": heart_rate, "motion_level": motion_level,
-        "sensor_mode": sensor_data["mode"], "eeg_quality": eeg_quality,
+        "sensor_mode": sensor_data["mode"],
+        "heart_rate_source": {"simulation": "SIMULATED_HEART_RATE", "replay": "REPLAY_DATA"}.get(sensor_data["mode"], "UNAVAILABLE"),
+        "eeg_quality": eeg_quality,
         "signal_status": signal_status, "features": features, "attention_index": attention_index,
         "score": score, "fusion_score": fusion_score, "state": state,
         "ml_prediction": ml_prediction, "ml_confidence": ml_confidence,
@@ -181,8 +183,9 @@ def _sensor_snapshot() -> dict:
 
 def _render_metrics(snapshot: dict) -> None:
     columns = st.columns(4)
+    heart_rate_source = snapshot.get("heart_rate_source", "UNAVAILABLE")
     values = [
-        ("❤️ Heart Rate", f"{snapshot['heart_rate']} BPM"),
+        (f"❤️ Heart Rate · {heart_rate_source}", f"{snapshot['heart_rate']} BPM"),
         ("🏃 Motion Level", f"{snapshot['motion_level']:.2f}"),
         ("🧠 Attention Score", f"{snapshot['fusion_score']}/100"),
         ("🎯 Attention State", snapshot["state"]),
@@ -218,6 +221,7 @@ def render_overview(snapshot: dict) -> None:
     history_df = pd.DataFrame(st.session_state.get("attention_history", []))
     if not history_df.empty:
         st.line_chart(history_df.set_index(history_df.index)[["Attention Score", "Heart Rate", "Motion Level"]])
+        st.caption(f"Heart-rate input source: {snapshot.get('heart_rate_source', 'UNAVAILABLE')}. Webcam rPPG remains separate from EEG.")
     st.info("Synthetic EEG feature-space benchmark results for academic prototyping; no clinical validity is implied.")
 
 
