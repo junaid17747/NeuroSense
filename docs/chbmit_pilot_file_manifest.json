@@ -1,0 +1,32 @@
+{
+  "schema_version": "1",
+  "dataset": "CHB-MIT Scalp EEG Database",
+  "dataset_version": "1.0.0",
+  "dataset_page": "https://physionet.org/content/chbmit/1.0.0/",
+  "license": "Open Data Commons Attribution License v1.0",
+  "planning_only": true,
+  "estimated_raw_edf_bytes": null,
+  "checksum_policy": "Obtain official per-patient SHA256SUMS files; expected per-file digests are deliberately unset until independently checked against those files.",
+  "recordings": [
+    {"path":"chb02/chb02_01.edf","patient":"chb02","partition":"train","annotation":"background_review_required","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb02/chb02_01.edf"},
+    {"path":"chb02/chb02_16.edf","patient":"chb02","partition":"train","annotation":"seizure","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb02/chb02_16.edf","sidecar_path":"chb02/chb02_16.edf.seizures","sidecar_url":"https://physionet.org/files/chbmit/1.0.0/chb02/chb02_16.edf.seizures"},
+    {"path":"chb05/chb05_01.edf","patient":"chb05","partition":"train","annotation":"background_review_required","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb05/chb05_01.edf"},
+    {"path":"chb05/chb05_06.edf","patient":"chb05","partition":"train","annotation":"seizure","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb05/chb05_06.edf","sidecar_path":"chb05/chb05_06.edf.seizures","sidecar_url":"https://physionet.org/files/chbmit/1.0.0/chb05/chb05_06.edf.seizures"},
+    {"path":"chb08/chb08_02.edf","patient":"chb08","partition":"train","annotation":"seizure","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb08/chb08_02.edf","sidecar_path":"chb08/chb08_02.edf.seizures","sidecar_url":"https://physionet.org/files/chbmit/1.0.0/chb08/chb08_02.edf.seizures"},
+    {"path":"chb08/chb08_03.edf","patient":"chb08","partition":"train","annotation":"background_review_required","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb08/chb08_03.edf"},
+    {"path":"chb09/chb09_01.edf","patient":"chb09","partition":"validation","annotation":"background_review_required","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb09/chb09_01.edf"},
+    {"path":"chb09/chb09_06.edf","patient":"chb09","partition":"validation","annotation":"seizure","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb09/chb09_06.edf","sidecar_path":"chb09/chb09_06.edf.seizures","sidecar_url":"https://physionet.org/files/chbmit/1.0.0/chb09/chb09_06.edf.seizures"},
+    {"path":"chb06/chb06_01.edf","patient":"chb06","partition":"test","annotation":"seizure","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb06/chb06_01.edf","sidecar_path":"chb06/chb06_01.edf.seizures","sidecar_url":"https://physionet.org/files/chbmit/1.0.0/chb06/chb06_01.edf.seizures"},
+    {"path":"chb06/chb06_02.edf","patient":"chb06","partition":"test","annotation":"background_review_required","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb06/chb06_02.edf"},
+    {"path":"chb10/chb10_01.edf","patient":"chb10","partition":"test","annotation":"background_review_required","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb10/chb10_01.edf"},
+    {"path":"chb10/chb10_12.edf","patient":"chb10","partition":"test","annotation":"seizure","expected_sha256":null,"url":"https://physionet.org/files/chbmit/1.0.0/chb10/chb10_12.edf","sidecar_path":"chb10/chb10_12.edf.seizures","sidecar_url":"https://physionet.org/files/chbmit/1.0.0/chb10/chb10_12.edf.seizures"}
+  ],
+  "patient_documents": [
+    {"patient":"chb02","summary_path":"chb02/chb02-summary.txt","summary_url":"https://physionet.org/files/chbmit/1.0.0/chb02/chb02-summary.txt","checksums_path":"chb02/SHA256SUMS","checksums_url":"https://physionet.org/files/chbmit/1.0.0/chb02/SHA256SUMS"},
+    {"patient":"chb05","summary_path":"chb05/chb05-summary.txt","summary_url":"https://physionet.org/files/chbmit/1.0.0/chb05/chb05-summary.txt","checksums_path":"chb05/SHA256SUMS","checksums_url":"https://physionet.org/files/chbmit/1.0.0/chb05/SHA256SUMS"},
+    {"patient":"chb06","summary_path":"chb06/chb06-summary.txt","summary_url":"https://physionet.org/files/chbmit/1.0.0/chb06/chb06-summary.txt","checksums_path":"chb06/SHA256SUMS","checksums_url":"https://physionet.org/files/chbmit/1.0.0/chb06/SHA256SUMS"},
+    {"patient":"chb08","summary_path":"chb08/chb08-summary.txt","summary_url":"https://physionet.org/files/chbmit/1.0.0/chb08/chb08-summary.txt","checksums_path":"chb08/SHA256SUMS","checksums_url":"https://physionet.org/files/chbmit/1.0.0/chb08/SHA256SUMS"},
+    {"patient":"chb09","summary_path":"chb09/chb09-summary.txt","summary_url":"https://physionet.org/files/chbmit/1.0.0/chb09/chb09-summary.txt","checksums_path":"chb09/SHA256SUMS","checksums_url":"https://physionet.org/files/chbmit/1.0.0/chb09/SHA256SUMS"},
+    {"patient":"chb10","summary_path":"chb10/chb10-summary.txt","summary_url":"https://physionet.org/files/chbmit/1.0.0/chb10/chb10-summary.txt","checksums_path":"chb10/SHA256SUMS","checksums_url":"https://physionet.org/files/chbmit/1.0.0/chb10/SHA256SUMS"}
+  ]
+}

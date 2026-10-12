@@ -174,7 +174,7 @@ def inspect_summary(path: Path | str, subject_id: str) -> tuple[tuple[SummaryRec
 
 class CHBMITAdapter:
     adapter_id = "chb_mit"
-    adapter_version = "1"
+    adapter_version = "2"
 
     def ingest(self, root: Path, item: RecordingInput, plan: IngestionPlan) -> AdaptedRecording:
         item = RecordingInput.model_validate(item)
@@ -206,6 +206,8 @@ class CHBMITAdapter:
         if len(matches) != 1:
             raise IngestionError("recording_absent_from_summary")
         annotation = matches[0]
+        if annotation.sampling_rate_hz != item.expected_sampling_rate_hz:
+            raise IngestionError("sampling_rate_mismatch")
         edf = inspect_edf(local_file(root, item.edf_path))
         if edf.sha256 != item.expected_signal_sha256:
             raise IngestionError("reviewed_signal_hash_mismatch")
@@ -224,7 +226,8 @@ class CHBMITAdapter:
                     raise IngestionError("dummy_channel_cannot_be_kept")
                 if channel.units != item.montage.units:
                     raise IngestionError("channel_units_mismatch")
-                if not channel.sampling_rate_hz == annotation.sampling_rate_hz == item.expected_sampling_rate_hz:
+                expected_rate = selection.expected_sampling_rate_hz or item.expected_sampling_rate_hz
+                if channel.sampling_rate_hz != expected_rate:
                     raise IngestionError("sampling_rate_mismatch")
                 kept.append(selection.output_label)
         if tuple(kept) != item.montage.channels:
@@ -233,6 +236,10 @@ class CHBMITAdapter:
             recording_id=f"chb_mit:1.0.0:{filename}", subject_id=item.subject_id,
             patient_group_id=patient, patient_identity_review_ref=plan.identities.review.evidence_ref,
             age=item.age, montage=item.montage, sampling_rate_hz=item.expected_sampling_rate_hz,
+            channel_sampling_rates_hz=tuple(
+                channel.sampling_rate_hz for channel, selection in zip(edf.channels, item.channels)
+                if selection.action == "keep"
+            ),
             device=item.device, preprocessing_id="chb_mit_raw_channel_selection_v1",
             provenance=DatasetProvenance(
                 dataset_id="chb_mit", version=plan.dataset_version, source_url=SOURCE_URL,

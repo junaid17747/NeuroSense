@@ -1,0 +1,20 @@
+{
+  "schema_version": "1",
+  "cohort_manifest_sha256": null,
+  "dataset_terms_status": "pending",
+  "dataset_terms_reviewer": null,
+  "dataset_terms_reviewed_on": null,
+  "dataset_terms_evidence_ref": null,
+  "institutional_determination": "pending",
+  "institutional_reviewer": null,
+  "institutional_reviewed_on": null,
+  "institutional_evidence_ref": null,
+  "faculty_status": "pending",
+  "faculty_reviewer": null,
+  "faculty_reviewed_on": null,
+  "faculty_evidence_ref": null,
+  "processing_status": "pending",
+  "processing_approver": null,
+  "processing_approved_on": null,
+  "processing_approval_ref": null
+}

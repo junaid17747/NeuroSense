@@ -65,6 +65,8 @@ class ChannelSelection(ResearchSchema):
     action: Literal["keep", "exclude"]
     output_label: Text | None = None
     reason: Text | None = None
+    # Required when this source signal intentionally differs from the case-level rate.
+    expected_sampling_rate_hz: PositiveNumber | None = None
 
     @model_validator(mode="after")
     def check_action(self):
@@ -72,6 +74,8 @@ class ChannelSelection(ResearchSchema):
             raise ValueError("Kept channels require an explicit unique output label.")
         if self.action == "exclude" and (self.reason is None or self.output_label is not None):
             raise ValueError("Excluded channels need a reason and cannot have an output label.")
+        if self.action == "exclude" and self.expected_sampling_rate_hz is not None:
+            raise ValueError("Excluded channels cannot declare a kept-signal sampling rate.")
         if self.action == "keep" and self.output_label != self.source_label and self.reason is None:
             raise ValueError("Channel label aliases require an explicit review reason.")
         return self

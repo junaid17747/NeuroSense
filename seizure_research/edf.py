@@ -22,6 +22,10 @@ class EDFChannel(ResearchSchema):
     index: NonnegativeInt
     label: Text
     units: str
+    physical_min: float
+    physical_max: float
+    digital_min: int
+    digital_max: int
     samples_per_record: PositiveInt
     sampling_rate_hz: PositiveNumber
 
@@ -103,8 +107,12 @@ def inspect_edf(path: Path | str) -> EDFMetadata:
             if not math.isfinite(rate) or rate <= 0:
                 raise IngestionError("edf_invalid_sampling_rate")
             channels.append(EDFChannel(index=index, label=label, units=units,
+                                       physical_min=physical_min, physical_max=physical_max,
+                                       digital_min=digital_min, digital_max=digital_max,
                                        samples_per_record=samples, sampling_rate_hz=rate))
         expected_size = header_bytes + records * 2 * sum(item.samples_per_record for item in channels)
+        if 2 * sum(item.samples_per_record for item in channels) > 61_440:
+            raise IngestionError("edf_data_record_size_exceeded")
         if before.st_size != expected_size:
             raise IngestionError("edf_payload_size_mismatch")
         fingerprint = hashlib.sha256(fixed + variable)

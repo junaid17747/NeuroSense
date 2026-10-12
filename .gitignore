@@ -45,3 +45,10 @@ data/database/*.db
 *.seizure
 *.seizures
 data/seizure_research/
+
+# Seizure pilot outputs (real data is staged outside the repository).
+/seizure_research_runs/
+/artifacts/seizure_research/
+*.parquet
+*.npz
+xgboost.json

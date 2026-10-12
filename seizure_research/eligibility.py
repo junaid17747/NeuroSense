@@ -97,6 +97,10 @@ def assess_eligibility(
         return EligibilityDecision(offline_research_eligible=False, reasons=("invalid_model_metadata",))
 
     reasons = []
+    if any(rate != recording.sampling_rate_hz for rate in recording.channel_sampling_rates_hz):
+        # Existing evidence describes one common rate. Mixed-rate source data
+        # needs a separately reviewed processed acquisition profile.
+        reasons.append("unsupported_per_channel_sampling_rates")
     try:
         require_research_ready(recording)
     except ValueError:

@@ -203,11 +203,19 @@ before the underscore and a plus sign before `.edf`.
 Channel selection retains source order and must account for all indices. Raw
 duplicate/dummy labels can be inspected, but dummy `-` channels cannot be kept;
 duplicates need explicitly reviewed exclusion or distinct aliases with reasons.
-Kept channels must match reviewed units, montage, and sampling rate. No unit
-conversion, filtering, resampling, or re-referencing occurs. The resulting
+Kept channels must match reviewed units and montage. Each source rate must
+match the reviewed channel-specific rate; the per-channel ordered rates are
+preserved in recording metadata. No unit conversion, filtering, resampling, or
+re-referencing occurs during Phase 2 ingestion. The resulting
 `preprocessing_id` is `chb_mit_raw_channel_selection_v1`; downstream eligibility
 requires evidence for that exact profile. A channel selection plan does not
 rewrite the source EDF or materialize a filtered signal.
+
+Checkpoint C introduces adapter version `2`, ordered per-channel sampling rates,
+and calibration metadata for waveform decoding. Rebuild and revalidate saved
+cohort/split artifacts made with adapter version `1`; do not manually repair
+their hashes. Mixed-rate raw recordings do not match existing single-rate model
+evidence. See [the Checkpoint C contract](seizure_research_phase3.md).
 
 ## Summary and annotation validation
 
@@ -225,8 +233,9 @@ silently ignoring annotation content. A malformed block elsewhere in the same
 summary also blocks acceptance: the complete reviewed source must parse.
 
 EDF and summary durations must agree within 1 microsecond; the exact ordered
-source labels must agree, and every kept EEG rate must match the summary and
-reviewed expectation. Annotation times use seconds relative to recording start
+source labels must agree; the case-level rate must match the summary, and every
+kept EEG rate must match its explicit reviewed channel rate (or the case-level
+rate when no override is present). Annotation times use seconds relative to recording start
 and the Phase 1 half-open interval convention. The source does not provide a
 seizure subtype in this summary, so events use `unspecified_in_source`.
 

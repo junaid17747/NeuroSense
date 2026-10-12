@@ -196,6 +196,8 @@ class EEGRecording(ResearchSchema):
     age: AgeAtRecording
     montage: ChannelMontage
     sampling_rate_hz: PositiveNumber
+    # Optional ordered per-montage channel rates for reviewed heterogeneous EDFs.
+    channel_sampling_rates_hz: tuple[PositiveNumber, ...] = ()
     device: RecordingDevice
     preprocessing_id: Text
     provenance: DatasetProvenance
@@ -208,6 +210,8 @@ class EEGRecording(ResearchSchema):
 
     @model_validator(mode="after")
     def check_timeline(self) -> Self:
+        if self.channel_sampling_rates_hz and len(self.channel_sampling_rates_hz) != len(self.montage.channels):
+            raise ValueError("Per-channel sampling rates must follow montage channel order.")
         events = self.annotations
         if len({event.event_id for event in events}) != len(events):
             raise ValueError("Duplicate annotation event IDs.")
