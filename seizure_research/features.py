@@ -314,6 +314,31 @@ def iter_approved_recording_windows(
     recording = entry.recording
     if recording.annotation_coverage != "complete":
         raise ValueError("complete_annotation_coverage_required")
+    with EDFStreamReader(root, entry.signal.relative_path) as reader:
+        yield from iter_verified_recording_windows(
+            reader, manifest, entry, config, split_manifest,
+            chunk_seconds=chunk_seconds, halo_seconds=halo_seconds,
+            max_samples=max_samples, space_check=space_check)
+
+
+def iter_verified_recording_windows(
+    reader: EDFStreamReader, manifest: CohortManifest, entry,
+    config: PreprocessingConfig, split_manifest: SplitManifest, *,
+    chunk_seconds: float = 300.0, halo_seconds: float = 60.0,
+    max_samples: int = 2_000_000,
+    space_check: Callable[[int], None] | None = None,
+) -> Iterator[WindowExample]:
+    """Shared bounded decoder loop after the source-specific review/hash gate.
+
+    The ordinary EDF entrypoint audits the full local cohort. The archive
+    entrypoint verifies the archive and re-ingests the single extracted source
+    before using this loop; it never needs to extract the entire cohort.
+    """
+    if (not math.isfinite(chunk_seconds) or not 0 < chunk_seconds <= 300
+            or not math.isfinite(halo_seconds) or not 0 < halo_seconds <= 300):
+        raise ValueError("chunk_parameters_invalid")
+    recording = entry.recording
+    validate_split_manifest((item.recording for item in manifest.records), split_manifest)
     selected = tuple(item.source_index for item in config.channels)
     max_rate = max(item.expected_source_rate_hz for item in config.channels)
     required_samples = math.ceil((chunk_seconds + 2 * halo_seconds) * max_rate * len(selected))
@@ -323,30 +348,29 @@ def iter_approved_recording_windows(
     edge_seconds = (_filter_edge_samples(config) / rate) + 2.0
     if halo_seconds < edge_seconds:
         raise ValueError("chunk_halo_below_filter_guard")
-    with EDFStreamReader(root, entry.signal.relative_path) as reader:
-        if (reader.metadata.sha256 != entry.signal.sha256
-                or reader.metadata.size_bytes != entry.signal.size_bytes
-                or reader.metadata.duration_seconds != recording.duration_seconds):
-            raise ValueError("edf_source_changed_after_manifest_validation")
-        core_start = 0.0
-        while core_start < recording.duration_seconds:
-            core_end = min(recording.duration_seconds, core_start + chunk_seconds)
-            read_start = max(0.0, core_start - halo_seconds)
-            read_end = min(recording.duration_seconds, core_end + halo_seconds)
-            if space_check is not None:
-                upper_rows = math.ceil((core_end - core_start) / config.step_seconds) + 1
-                space_check(upper_rows * (len(feature_names(len(config.channels))) * 4 + 512))
-            decoded = reader.read_range(read_start, read_end, channel_indices=selected,
-                                        max_samples=max_samples)
-            processed = preprocess_recording(
-                recording, decoded, config, approved_manifest=manifest,
-                split_manifest=split_manifest)
-            yield from iter_processed_windows(
-                processed, recording, core_start_seconds=core_start,
-                core_end_seconds=core_end, window_seconds=config.window_seconds,
-                step_seconds=config.step_seconds)
-            del decoded, processed
-            core_start = core_end
+    if (reader.metadata.sha256 != entry.signal.sha256
+            or reader.metadata.size_bytes != entry.signal.size_bytes
+            or reader.metadata.duration_seconds != recording.duration_seconds):
+        raise ValueError("edf_source_changed_after_manifest_validation")
+    core_start = 0.0
+    while core_start < recording.duration_seconds:
+        core_end = min(recording.duration_seconds, core_start + chunk_seconds)
+        read_start = max(0.0, core_start - halo_seconds)
+        read_end = min(recording.duration_seconds, core_end + halo_seconds)
+        if space_check is not None:
+            upper_rows = math.ceil((core_end - core_start) / config.step_seconds) + 1
+            space_check(upper_rows * (len(feature_names(len(config.channels))) * 4 + 512))
+        decoded = reader.read_range(read_start, read_end, channel_indices=selected,
+                                    max_samples=max_samples)
+        processed = preprocess_recording(
+            recording, decoded, config, approved_manifest=manifest,
+            split_manifest=split_manifest)
+        yield from iter_processed_windows(
+            processed, recording, core_start_seconds=core_start,
+            core_end_seconds=core_end, window_seconds=config.window_seconds,
+            step_seconds=config.step_seconds)
+        del decoded, processed
+        core_start = core_end
 
 
 def extract_approved_recording_features(

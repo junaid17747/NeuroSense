@@ -58,13 +58,17 @@ class WebcamNavigationTests(unittest.TestCase):
     def test_overview_button_opens_webcam_page_and_back_preserves_history(self):
         self.sign_in()
         self.assertEqual(self.app.title[0].value, "Overview")
+        self.assertEqual(self.app.subheader[0].value, "EEG Seizure Research")
         self.assertTrue(any("SIMULATED_HEART_RATE" in metric.label for metric in self.app.metric))
         elements = list(self.app.main)
+        research_button = self.app.button(key="open_eeg_seizure_research")
         button = self.app.button(key="start_webcam_monitoring")
         attention_metrics = [m for m in self.app.metric if "Attention" in m.label]
+        self.assertLess(elements.index(self.app.subheader[0]), elements.index(research_button))
+        for metric in attention_metrics:
+            self.assertLess(elements.index(research_button), elements.index(metric))
         for metric in attention_metrics:
             self.assertLess(elements.index(metric), elements.index(button))
-        self.assertLess(elements.index(button), elements.index(self.app.subheader[0]))
         self.assertEqual(len(self.app.get("vega_lite_chart")), 1)
 
         button.click().run()
@@ -82,6 +86,25 @@ class WebcamNavigationTests(unittest.TestCase):
         self.assertEqual(self.app.session_state.attention_history[0]["Attention Score"], 80)
         self.assertEqual(self.app.session_state.auth_token, self.auth["access_token"])
         self.assertEqual(len(self.app.get("vega_lite_chart")), 1)
+
+    def test_overview_research_card_opens_authenticated_seizure_workspace(self):
+        self.sign_in()
+        self.app.button(key="open_eeg_seizure_research").click().run()
+        self.assertFalse(self.app.exception)
+        self.assertEqual(self.app.title[0].value, "EEG Seizure Research")
+        self.assertEqual(self.app.radio(key="workspace_page").value, "EEG Seizure Research")
+        self.assertTrue(all(item.value == "Not evaluated" for item in self.app.metric))
+        self.assertTrue(any(button.key == "synthetic_eeg_player_start" for button in self.app.button))
+        self.assertTrue(any(button.key == "synthetic_eeg_player_pause" for button in self.app.button))
+        self.assertTrue(any(button.key == "synthetic_eeg_player_resume" for button in self.app.button))
+        self.assertTrue(any(button.key == "synthetic_eeg_player_stop" for button in self.app.button))
+        self.assertTrue(any("Live Synthetic EEG" in item.value
+                            for item in self.app.caption))
+        self.assertGreaterEqual(len(self.app.get("vega_lite_chart")), 1)
+        self.assertNotIn("Bounded waveform viewer", [item.value for item in self.app.subheader])
+        self.assertFalse(any("Synthetic display duration" in item.label for item in self.app.slider))
+        self.assertTrue(any(button.key == "seizure_status_refresh" for button in self.app.button))
+        self.assertFalse(self.app.get("bidi_component"))
 
     def test_sidebar_can_open_webcam_page(self):
         self.sign_in()
@@ -121,6 +144,8 @@ class WebcamNavigationTests(unittest.TestCase):
 
     def test_logout_removes_webcam_and_resets_navigation(self):
         self.sign_in()
+        self.app.session_state.synthetic_eeg_player_mode = "playing"
+        self.app.session_state.approved_edf_player_elapsed = 12.5
         self.app.button(key="start_webcam_monitoring").click().run()
         next(b for b in self.app.button if b.label == "Log out").click().run()
         self.assertFalse(self.app.exception)
@@ -128,6 +153,8 @@ class WebcamNavigationTests(unittest.TestCase):
         self.assertFalse(self.app.get("bidi_component"))
         self.assertNotIn("workspace_page", self.app.session_state)
         self.assertNotIn("attention_history", self.app.session_state)
+        self.assertNotIn("synthetic_eeg_player_mode", self.app.session_state)
+        self.assertNotIn("approved_edf_player_elapsed", self.app.session_state)
         self.assertIsNone(auth_client.current_user(self.auth["access_token"]))
 
 

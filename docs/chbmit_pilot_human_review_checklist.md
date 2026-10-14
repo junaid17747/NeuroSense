@@ -1,91 +1,94 @@
-# CHB-MIT Pilot: Human Review and Authorization Checklist
+# CHB-MIT pilot: human review and authorization checklist
 
-**Nothing is approved by this blank checklist.** Check an item only after the
-named person or institutional office has completed it and the cited evidence
-has been saved in the approved project location.
+This blank checklist records decisions; it is not itself an approval. Do not
+mark an item complete without the named reviewer, date, and evidence reference.
+The exact allowlisted cohort and source file hashes are in
+[`chbmit_pilot_file_manifest.json`](chbmit_pilot_file_manifest.json).
 
-## Dataset terms and permission
+## Faculty guidance for seizure-focused research
 
-- [ ] Faculty guide reviewed the research question, non-clinical scope, cohort,
-  and patient split.
+- [ ] Faculty guide reviewed and supports the age-aware, seizure-event
+  research objective and non-clinical scope.
+- [ ] Faculty reviewed the proposed six-patient split and exact twelve EDFs:
+  train `chb02/chb05/chb08`, validation `chb09`, test `chb06/chb10`.
+- [ ] Faculty confirmed the `chb01`/`chb21` same-patient alias safeguard.
+- [ ] Faculty selected/approved the human reviewer(s) for annotation and
+  signal-quality review.
+
+Faculty reviewer/date/evidence: __________________________________________
+
+## Dataset-use permission and license review
+
 - [ ] Project owner reviewed the PhysioNet CHB-MIT v1.0.0 Open Data Commons
-  Attribution License v1.0, citation requirements, and any applicable local
-  use terms.
-- [ ] Faculty/institution authorized obtaining and staging these exact twelve
-  EDFs, their six patient summary files, six official `SHA256SUMS` files, and
-  six seizure sidecars listed in `chbmit_pilot_file_manifest.json`.
-- [ ] The source checksums and actual byte sizes were independently checked;
-  the planned files fit under the total 5 GiB cap.
-- [ ] Data custodian confirmed external storage, named-user access, retention,
-  backup, and deletion arrangements.
+  Attribution License v1.0, required dataset citation, and any local terms.
+- [ ] Responsible project authority determined this research use and access
+  satisfy the license and university data-use rules.
+- [ ] The exact manifest hash reviewed for staging is recorded:
+  _______________________________________________________________________
+- [ ] Data custodian approved the external location, named-user access,
+  retention, backup, and deletion plan.
 
-Decision/evidence reference: ____________________________________________
+Dataset-use reviewer/date/evidence: ______________________________________
 
-Reviewer and date: ______________________________________________________
+## Institutional ethics determination
 
-## Ethics and human-subject determination
-
-- [ ] Responsible institutional office determined whether this secondary
-  analysis requires ethics/IRB review, is exempt, or does not require review.
-- [ ] The written determination and any conditions are recorded. If review is
-  required, approval is final and covers this use before data are obtained or
-  processed.
-- [ ] Faculty reviewed the sensitivity of pediatric EEG data and confirmed the
-  permitted research-only scope.
+- [ ] Responsible institutional office made a written determination whether
+  the secondary analysis requires ethics/IRB review, is exempt, or is not
+  required.
+- [ ] Any required review is final and covers this proposed access and use.
+- [ ] Conditions relevant to pediatric EEG, access, retention, and sharing are
+  documented and assigned.
 
 Determination (approved / exempt / not required / pending): _______________
 
-Office, reviewer, date, evidence reference: ______________________________
+Office, reviewer/date/evidence: _________________________________________
 
-## Cohort, identity, and source-file review
+## Human annotation and signal-quality review
 
-- [ ] Human reviewer confirmed the exact twelve EDF paths and the train
-  (`chb02`, `chb05`, `chb08`), validation (`chb09`), and test (`chb06`,
-  `chb10`) patient assignments.
-- [ ] Reviewer confirmed the `chb01`/`chb21` alias safeguard remains intact and
-  neither alias is in this proposed cohort.
-- [ ] Official per-patient SHA256 checksum files were obtained and each staged
-  EDF, summary, and sidecar matches its official checksum.
-- [ ] CHB-MIT age eligibility, EDF metadata, montage, channel mapping, units,
-  sampling rate, and signal quality were reviewed for every recording.
-- [ ] All twelve files are within the approved data-use and storage scope.
+- [ ] Human reviewer checked all six seizure sidecars against their matching
+  summary event count and onset/offset times; discrepancies were resolved.
+- [ ] Human reviewer checked the full duration of all six proposed background
+  recordings; no-event summary text alone was not treated as seizure-free
+  evidence.
+- [ ] Annotation coverage begins at 0 seconds and ends at each EDF's reviewed
+  duration. Reviewer, dates, intervals, source hashes, and evidence references
+  are recorded.
+- [ ] Age metadata, montage, channel order, units, sampling rates, and quality
+  were reviewed for each EDF. Exclusions and reasons are recorded.
+- [ ] The official dataset-wide `SHA256SUMS.txt` entries, expected sizes, and
+  exact staged file list match the D3 machine-readable manifest.
 
-Cohort-manifest SHA-256: _________________________________________________
+Reviewers/date/evidence and annotation manifest hash: ____________________
 
-Reviewer, date, evidence reference: ______________________________________
+## Explicit authorization to stage real recordings
 
-## Annotation and non-seizure coverage review
+- [ ] Faculty/institution explicitly approved downloading/staging only the 25
+  files in the frozen manifest: twelve EDFs, six summaries, six seizure
+  sidecars, and the single global checksum file.
+- [ ] Approval record includes `staging_manifest_sha256` matching the reviewed
+  manifest and names the staging approver, date, and evidence reference.
+- [ ] Approved external root is outside Git. The 5 GiB pilot cap and at least
+  20 GiB free-space reserve passed immediately before transfer.
+- [ ] `staging_root` names that exact persistent location;
+  `storage_persistence_confirmed` and `storage_policy_ref` reflect genuine
+  custodian review. No temporary directory is used for long-term EEG storage.
 
-- [ ] Each of the six proposed seizure recordings has its exact
-  `.edf.seizures` sidecar hash recorded.
-- [ ] Reviewer reconciled each sidecar's event count and onset/offset times
-  with the corresponding summary; discrepancies were resolved and documented.
-- [ ] Each of the six recordings without summary events was reviewed for its
-  **entire** EDF duration; absence of summary events alone was not treated as
-  seizure-free evidence.
-- [ ] Annotation coverage begins at recording time zero and ends at the EDF
-  duration for every recording.
-- [ ] Annotation evidence records reviewer, date, summary hash, sidecar hash
-  where applicable, reviewed intervals, and reconciliation reference.
+Staging approver/date/evidence: __________________________________________
 
-Annotation-evidence manifest SHA-256: ___________________________________
+## Separate authorization to process and train
 
-Reviewers and evidence references: ______________________________________
+- [ ] Dataset is staged and all file sizes/hashes pass the read-only readiness
+  command.
+- [ ] Annotation/quality evidence and reviewed patient split are complete.
+- [ ] Faculty/institution explicitly authorized bounded EEG processing,
+  feature extraction, and experimental XGBoost training, recorded separately
+  from authorization to download.
+- [ ] Approval record is bound to the final cohort-manifest hash and contains
+  the processing approver, date, and evidence reference.
+- [ ] Everyone understands this is non-clinical research and does not claim
+  clinical validation or authorize care decisions.
 
-## Storage and processing authorization
+Processing approver/date/evidence: _______________________________________
 
-- [ ] External pilot root has a 5 GiB total cap and is outside the Git worktree.
-- [ ] Free space is at least 20 GiB before each download/processing stage.
-- [ ] Read-only readiness report has no blockers and is bound to the final
-  cohort-manifest hash.
-- [ ] Faculty has explicitly authorized processing the real recordings for
-  feature extraction and experimental model training.
-- [ ] The authorization scope, approver, date, and reference are recorded;
-  approval does not claim clinical validation.
-
-Readiness-report reference/date: ________________________________________
-
-Processing approver/date/evidence reference: ____________________________
-
-**Do not proceed to Checkpoint D3 while any required item is unchecked, any
-decision is pending, or the readiness report contains blockers.**
+**Do not stage or process recordings while any applicable decision is pending,
+any evidence is missing, or the readiness report contains blockers.**

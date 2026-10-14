@@ -1,0 +1,669 @@
+{
+  "background_candidates": [
+    {
+      "canonical_patient_id": "chb01",
+      "listed_with_seizures": false,
+      "path": "chb01/chb01_27.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "77e86183845192d147c88a9bb4263c2b4a32e936c6236029770f86ca2ea023db",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb02",
+      "listed_with_seizures": false,
+      "path": "chb02/chb02_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "a4a84999f666652479bc0340d49c98f9c018a53b155e3164500f035dc35b025a",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb03",
+      "listed_with_seizures": false,
+      "path": "chb03/chb03_05.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "8d74eb131a96959c7b2aec82215d232dc26c3012c4d98c2a1c5f5dac520f52b4",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb04",
+      "listed_with_seizures": false,
+      "path": "chb04/chb04_11.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "5b4d79d2b50bb5dd4e9eb947d50bb797c3e066471d1bbc2a0f66dac1564a007d",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb05",
+      "listed_with_seizures": false,
+      "path": "chb05/chb05_02.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "6f8c1724c71aaee20523d138129c4f4366ed1f9bb7f220b146fc503661b6a3b4",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb06",
+      "listed_with_seizures": false,
+      "path": "chb06/chb06_16.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "87ec0c8cb06d61154634bbcf900f2e525e83778ea9bc4e7a2b3143e27bbfe019",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb07",
+      "listed_with_seizures": false,
+      "path": "chb07/chb07_07.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "9a6136f392dc7c53fc1da6ed03aa7a096e6b836801f34eef91a0c963313179e2",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb08",
+      "listed_with_seizures": false,
+      "path": "chb08/chb08_03.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "d409ff3a74cb0b85310bd2f4428110e991d9e70969cf4ae8cc41de1671a3bd10",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb09",
+      "listed_with_seizures": false,
+      "path": "chb09/chb09_17.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "1ac673eacfa9d2fabb4f065aaed69ca79ca558c662e931383e0b4a39104d31b7",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb10",
+      "listed_with_seizures": false,
+      "path": "chb10/chb10_02.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "f63fbc9359c894a81f92ed126f0b813eb3cfc279f9a17b068ed3680abc575353",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb11",
+      "listed_with_seizures": false,
+      "path": "chb11/chb11_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "364cda908c4bafa6a41128afcd8283110fe00d147c5ce220c1edd228339e5739",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb12",
+      "listed_with_seizures": false,
+      "path": "chb12/chb12_19.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "92666e980cf2e72e9c43e4e8ef402183fbb823c25bd2dc5dfdd795cea5bc9124",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb13",
+      "listed_with_seizures": false,
+      "path": "chb13/chb13_05.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "0ba2fec8080ed8954691b50c5a547c3cc1b1dcfd2d69f1781daccbc51b6afc4d",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb14",
+      "listed_with_seizures": false,
+      "path": "chb14/chb14_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "7204b5600917e64038a7a0999b407c6af9cfe14b6ea93551b4ca5a1915d58b5c",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb15",
+      "listed_with_seizures": false,
+      "path": "chb15/chb15_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "9292222c0ee6dc2eef99e9308859de4e0cdeca3cdf06fd5db354718398cc9045",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb16",
+      "listed_with_seizures": false,
+      "path": "chb16/chb16_19.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "8dc08a551104f380bcf3aa9a7421f89035e397596426f1c15dc36adf3e54af0a",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb17",
+      "listed_with_seizures": false,
+      "path": "chb17/chb17c_13.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "adc698ad22b85759ee35b72ec41eb6520e1bdad240cc6e4ab0a1b6d8471446f7",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb18",
+      "listed_with_seizures": false,
+      "path": "chb18/chb18_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "bc3b1c550390caa8c4d580e7cbb1ecc578d6b6c4cef16a78b6db9972982db5a2",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb19",
+      "listed_with_seizures": false,
+      "path": "chb19/chb19_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "4031298414c96583d42e9b4d5e0edeb7d0fc3026a0a86ed145a895ebcb4310e5",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb20",
+      "listed_with_seizures": false,
+      "path": "chb20/chb20_22.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "5ec09dd6b1bc1bc9a7530593e94dcc7a950d239e331e612ac8438eb9ce9a5499",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb22",
+      "listed_with_seizures": false,
+      "path": "chb22/chb22_01.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "b4e91ab5c493c749eaa29acdc10956c3dbec108245b1cff8e22e38fd54b7408b",
+      "verified_background": false
+    },
+    {
+      "canonical_patient_id": "chb23",
+      "listed_with_seizures": false,
+      "path": "chb23/chb23_07.edf",
+      "required_action": "Review full duration; explicitly record seizure-free intervals and quality exclusions.",
+      "reviewed_intervals": [],
+      "sidecar_listed": false,
+      "summary_declares_zero": true,
+      "summary_sha256": "7be34387af3ee529e38d14e953bb8749adbf1e40bf1fc10eb2c5f21c2484bbdb",
+      "verified_background": false
+    }
+  ],
+  "finding": "Public summaries and list/sidecar presence do not resolve the conflicts or certify background.",
+  "inventory_sha256": "ec686dddc0d49f5c39e1922b4b6f91e4e5572c31ffbd0b54016ef86c31267c85",
+  "issues": [
+    {
+      "directory_sha256": "883fb6b2bc548345ed6ef5d9abf9507c4ecda42b3647ede4ad877023fe0f4669",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb07/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb07/chb07_07.edf",
+        "chb07/chb07_13.edf"
+      ],
+      "gaps": [
+        "summary_sidecar_seizure_list_conflict"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": true,
+      "path": "chb07/chb07_18.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": {
+        "declared_seizures": 0,
+        "sampling_rate_hz": 256.0,
+        "summary_channels": [
+          "FP1-F7",
+          "F7-T7",
+          "T7-P7",
+          "P7-O1",
+          "FP1-F3",
+          "F3-C3",
+          "C3-P3",
+          "P3-O1",
+          "FP2-F4",
+          "F4-C4",
+          "C4-P4",
+          "P4-O2",
+          "FP2-F8",
+          "F8-T8",
+          "T8-P8",
+          "P8-O2",
+          "FZ-CZ",
+          "CZ-PZ",
+          "P7-T7",
+          "T7-FT9",
+          "FT9-FT10",
+          "FT10-T8",
+          "T8-P8"
+        ],
+        "summary_event_structure_valid": true,
+        "summary_intervals": []
+      },
+      "summary_sha256": "9a6136f392dc7c53fc1da6ed03aa7a096e6b836801f34eef91a0c963313179e2",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb07/chb07-summary.txt"
+    },
+    {
+      "directory_sha256": "883fb6b2bc548345ed6ef5d9abf9507c4ecda42b3647ede4ad877023fe0f4669",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb07/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb07/chb07_07.edf",
+        "chb07/chb07_13.edf"
+      ],
+      "gaps": [
+        "summary_sidecar_seizure_list_conflict"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb07/chb07_19.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": 54,
+      "sidecar_listed": true,
+      "sidecar_sha256": "f70b7cf41c1384e181e22873cb01096be28b4ac6eb67b4bd73220e6535949b5e",
+      "summary": {
+        "declared_seizures": 1,
+        "sampling_rate_hz": 256.0,
+        "summary_channels": [
+          "FP1-F7",
+          "F7-T7",
+          "T7-P7",
+          "P7-O1",
+          "FP1-F3",
+          "F3-C3",
+          "C3-P3",
+          "P3-O1",
+          "FP2-F4",
+          "F4-C4",
+          "C4-P4",
+          "P4-O2",
+          "FP2-F8",
+          "F8-T8",
+          "T8-P8",
+          "P8-O2",
+          "FZ-CZ",
+          "CZ-PZ",
+          "P7-T7",
+          "T7-FT9",
+          "FT9-FT10",
+          "FT10-T8",
+          "T8-P8"
+        ],
+        "summary_event_structure_valid": true,
+        "summary_intervals": [
+          {
+            "end_seconds": 13831.0,
+            "start_seconds": 13688.0
+          }
+        ]
+      },
+      "summary_sha256": "9a6136f392dc7c53fc1da6ed03aa7a096e6b836801f34eef91a0c963313179e2",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb07/chb07-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_02.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_05.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_08.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_10.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_12.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_16.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_18.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_19.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_20.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    },
+    {
+      "directory_sha256": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+      "directory_url": "https://physionet.org/files/chbmit/1.0.0/chb24/",
+      "disposition": "Excluded from original proposal; do not repair labels by assumption.",
+      "existing_annotation_consistent_alternatives": [
+        "chb24/chb24_06.edf"
+      ],
+      "gaps": [
+        "summary_record_missing"
+      ],
+      "human_action": "Reconcile official evidence after authorized staging; seek dataset maintainer clarification if needed.",
+      "listed_with_seizures": false,
+      "path": "chb24/chb24_22.edf",
+      "resolved_by_public_metadata": false,
+      "seizure_list_sha256": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+      "seizure_list_url": "https://physionet.org/files/chbmit/1.0.0/RECORDS-WITH-SEIZURES",
+      "selected": false,
+      "sidecar_bytes": null,
+      "sidecar_listed": false,
+      "sidecar_sha256": null,
+      "summary": null,
+      "summary_sha256": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+      "summary_url": "https://physionet.org/files/chbmit/1.0.0/chb24/chb24-summary.txt"
+    }
+  ],
+  "labels_created": false,
+  "report_sha256": "88ef85d243ca04e1c5868b6b65666a65bb58756aa216be6056501f5b17bba75b",
+  "schema_version": "chbmit-annotation-discrepancy-investigation-v1",
+  "selection_sha256": "87defcecf646bbd876a27178dc771a036e4396edd7d010e791891bbd48affa53",
+  "sidecar_contents_reviewed": false,
+  "source_metadata_sha256": {
+    "ANNOTATORS": "32c1a2707964fdc006585a61987bbd497b765ca3159b4c942c705f2ad9213a5b",
+    "RECORDS": "72b640d6a3fef4b40de255933d1403823d1655c56f93d69761105a653798fc08",
+    "RECORDS-WITH-SEIZURES": "eadf7ef26246132b8708c2b4571e05cc0112d791e6b4eba2718bba0875ca5fad",
+    "SHA256SUMS.txt": "f1698efeb9fef887e55cedf6eda13386d9a888db663aec48b2aa194b7b753d2b",
+    "SUBJECT-INFO": "351eaea5e090265d422fac595fa5fb8e8edfb0232091e623c852c505697fd66b",
+    "chb01/chb01-summary.txt": "77e86183845192d147c88a9bb4263c2b4a32e936c6236029770f86ca2ea023db",
+    "chb01/listing.html": "578bce919368d420f32e889246c3146dde2f83c8b2e163d077e06b8c75cd09ff",
+    "chb02/chb02-summary.txt": "a4a84999f666652479bc0340d49c98f9c018a53b155e3164500f035dc35b025a",
+    "chb02/listing.html": "941f5587c57f7d30495c8261820f82e5c94ffe24813d3b721cf2621826f09a65",
+    "chb03/chb03-summary.txt": "8d74eb131a96959c7b2aec82215d232dc26c3012c4d98c2a1c5f5dac520f52b4",
+    "chb03/listing.html": "ddaeaef140407b0777c083ad408e9d624b34f25153058f693f0f7730b7b28811",
+    "chb04/chb04-summary.txt": "5b4d79d2b50bb5dd4e9eb947d50bb797c3e066471d1bbc2a0f66dac1564a007d",
+    "chb04/listing.html": "43b3d1deb087b826c62b2e6560a791b924a3d1bd0ac827a4f31c183c2f023154",
+    "chb05/chb05-summary.txt": "6f8c1724c71aaee20523d138129c4f4366ed1f9bb7f220b146fc503661b6a3b4",
+    "chb05/listing.html": "1f5319b93769f851ec84450687b73bad19562c5645ea16e9b8e94022fa32a981",
+    "chb06/chb06-summary.txt": "87ec0c8cb06d61154634bbcf900f2e525e83778ea9bc4e7a2b3143e27bbfe019",
+    "chb06/listing.html": "4f5b9676e9970207ce0a3d4167408db5254efc1462c851eb506a6a8f7009b487",
+    "chb07/chb07-summary.txt": "9a6136f392dc7c53fc1da6ed03aa7a096e6b836801f34eef91a0c963313179e2",
+    "chb07/listing.html": "883fb6b2bc548345ed6ef5d9abf9507c4ecda42b3647ede4ad877023fe0f4669",
+    "chb08/chb08-summary.txt": "d409ff3a74cb0b85310bd2f4428110e991d9e70969cf4ae8cc41de1671a3bd10",
+    "chb08/listing.html": "306eb6554b3575dbdf6db44f74149303db38dcdc8d4772c74f2959dd0435f1a5",
+    "chb09/chb09-summary.txt": "1ac673eacfa9d2fabb4f065aaed69ca79ca558c662e931383e0b4a39104d31b7",
+    "chb09/listing.html": "20e122ba714602c15219834a574ea463500289f3da6dff32ad5108ccd4572783",
+    "chb10/chb10-summary.txt": "f63fbc9359c894a81f92ed126f0b813eb3cfc279f9a17b068ed3680abc575353",
+    "chb10/listing.html": "3a7333622e0197d4582a98d06b2a3234c0db5c0a9a9c5fdeb8dd0839b4286ec7",
+    "chb11/chb11-summary.txt": "364cda908c4bafa6a41128afcd8283110fe00d147c5ce220c1edd228339e5739",
+    "chb11/listing.html": "5a3864cadc98c1ef2b77f4da0332567cfe5a1c9b0bc403f666cd4bbbefb4b3ea",
+    "chb12/chb12-summary.txt": "92666e980cf2e72e9c43e4e8ef402183fbb823c25bd2dc5dfdd795cea5bc9124",
+    "chb12/listing.html": "dd8f642800991d9673e9f1fe4692dc339d2f69bd28350ff101c4031ea0986c35",
+    "chb13/chb13-summary.txt": "0ba2fec8080ed8954691b50c5a547c3cc1b1dcfd2d69f1781daccbc51b6afc4d",
+    "chb13/listing.html": "833ae05bdb56790b62cd4268454f697096add3b31ed5ef90d2ed9b2e43710bc2",
+    "chb14/chb14-summary.txt": "7204b5600917e64038a7a0999b407c6af9cfe14b6ea93551b4ca5a1915d58b5c",
+    "chb14/listing.html": "5a0f0f5833a2fe050bb61c16dcc9081bdea39f51f18d1ba698d408cf699efe0d",
+    "chb15/chb15-summary.txt": "9292222c0ee6dc2eef99e9308859de4e0cdeca3cdf06fd5db354718398cc9045",
+    "chb15/listing.html": "7394ca52d45469a6a3647db13db4ca3ea7bc402da65872f8a47882c64a4e52df",
+    "chb16/chb16-summary.txt": "8dc08a551104f380bcf3aa9a7421f89035e397596426f1c15dc36adf3e54af0a",
+    "chb16/listing.html": "b5dbb9825da92b8ffb6ae721e9bf117dbfa69f5b9b080940b2bce8213b42ec36",
+    "chb17/chb17-summary.txt": "adc698ad22b85759ee35b72ec41eb6520e1bdad240cc6e4ab0a1b6d8471446f7",
+    "chb17/listing.html": "d92c0e9b2133d42377870e570fef9bb9caa054b62f9b9395cdb455429e69b5ac",
+    "chb18/chb18-summary.txt": "bc3b1c550390caa8c4d580e7cbb1ecc578d6b6c4cef16a78b6db9972982db5a2",
+    "chb18/listing.html": "5890addb5a6757a6e6a9d1d425043e8d2d00be50309147f78997d16a2f154670",
+    "chb19/chb19-summary.txt": "4031298414c96583d42e9b4d5e0edeb7d0fc3026a0a86ed145a895ebcb4310e5",
+    "chb19/listing.html": "edc5254e201e3d7b1593ee20e2ce824e5a771fb74b2b199097f4e5e5e857c9b9",
+    "chb20/chb20-summary.txt": "5ec09dd6b1bc1bc9a7530593e94dcc7a950d239e331e612ac8438eb9ce9a5499",
+    "chb20/listing.html": "f02f7d02ef01001378d0fd69a92a27c1148010ea744d0805359e7d32499ec56f",
+    "chb21/chb21-summary.txt": "469c2d95395fe9e5eabc4a901145e95e539e8153f29f2b836592880572e5f07b",
+    "chb21/listing.html": "8a680f5c95c31a199508ddc5269061959c7eac9eed6aa6c87ef6466ce687b2ea",
+    "chb22/chb22-summary.txt": "b4e91ab5c493c749eaa29acdc10956c3dbec108245b1cff8e22e38fd54b7408b",
+    "chb22/listing.html": "496d211b9b4aca85e642cd042361f2599cf71b90f6a610544d1cd2dc1af0e3f1",
+    "chb23/chb23-summary.txt": "7be34387af3ee529e38d14e953bb8749adbf1e40bf1fc10eb2c5f21c2484bbdb",
+    "chb23/listing.html": "87319c052ad24eec35e4b514b6bfcdff7351d122d4ff815fa57812e706f5b3c6",
+    "chb24/chb24-summary.txt": "359b083a8234bccb516610a1a183c1b964a1ca5e685e41a0407271b755b28a8c",
+    "chb24/listing.html": "1746b469b20e37fa1a8c75dacd226cc126fe4132100da3626b6617fc43f2b259",
+    "dataset-page.html": "1c1467bfd118d3c60694fb450f0a002ffdd637ba2d22773d6093b84804f7aacc",
+    "license.html": "b05df5b4bdd08737212ff2bcf5043d79da0bd55c687a7fa029d1fd010fc957b2",
+    "root.html": "53e28c6873c5754be51c6003f9cb495f0ba3156b0e3f5826d7bd7af6cf138302"
+  },
+  "verified_background_recordings": 0
+}

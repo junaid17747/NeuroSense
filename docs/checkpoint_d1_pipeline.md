@@ -77,8 +77,9 @@ latency is retrospective and is not a real-time guarantee.
 
 The pilot root is external to the Git repository. It is capped at 5 GiB total;
 every extraction/write stage checks the cap and checks that at least 20 GiB
-remain free on the containing filesystem. The proposed raw cohort is about
-0.96 GB. Feature size depends on reviewed EDF durations and exclusions; an
+remain free on the containing filesystem. The twelve proposed EDFs total
+1,004,143,360 bytes (0.935 GiB); all staged sources total 1,004,239,275 bytes
+(0.935 GiB). Feature size depends on reviewed EDF durations and exclusions; an
 upper planning formula is approximately 1.5 kB per one-second window before
 Parquet compression, plus small manifests and model files. Peak decoded waveform
 memory is bounded by the configured chunk/halo sample ceiling; training loads
@@ -117,12 +118,15 @@ will be:
 
 ```bash
 python -m seizure_research.training run-pilot \
-  --root /external/approved/chbmit-pilot \
-  --cohort-manifest /external/approved/cohort-manifest.json \
-  --preprocessing-config /external/approved/preprocessing.json \
-  --annotation-evidence /external/approved/annotation-evidence.json \
-  --output-dir /external/approved/chbmit-pilot/run-001 \
+  --root /mnt/approved/neurosense/chbmit-pilot \
+  --cohort-manifest /mnt/approved/neurosense/chbmit-pilot/cohort-manifest.json \
+  --preprocessing-config /mnt/approved/neurosense/chbmit-pilot/preprocessing.json \
+  --annotation-evidence /mnt/approved/neurosense/chbmit-pilot/annotation-evidence.json \
+  --approval-record /mnt/approved/neurosense/chbmit-pilot/faculty-approval.json \
+  --file-manifest docs/chbmit_pilot_file_manifest.json \
+  --output-dir /mnt/approved/neurosense/chbmit-pilot/runs/run-001 \
   --approve-real-data-processing
 ```
 
-This command is provided for review only and was not run during Checkpoint D1.
+The CLI also requires the D4 readiness audit to pass before decoding. This
+command is provided for review only and was not run during Checkpoint D1.

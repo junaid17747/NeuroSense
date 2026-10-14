@@ -1,0 +1,63 @@
+{
+  "alias_safeguard": {
+    "canonical_aliases": [
+      "chb01",
+      "chb21"
+    ],
+    "cohort_excludes_both": true
+  },
+  "blockers": [
+    "annotation_evidence_missing",
+    "approved_preprocessing_profile_missing",
+    "cohort_manifest_missing",
+    "human_approval_record_missing",
+    "preprocessing_config_missing",
+    "storage_root_missing_or_unsafe"
+  ],
+  "checks": {
+    "annotation_evidence": {
+      "status": "missing"
+    },
+    "approval_record": {
+      "status": "missing"
+    },
+    "cohort_manifest": {
+      "status": "missing"
+    },
+    "file_manifest": {
+      "file_count": 25,
+      "sha256": "dc81f5f555e098806ebe977a6e553eee314e7b66a897a5620f037d44e2b79bcd",
+      "status": "valid"
+    },
+    "preprocessing_config": {
+      "status": "missing"
+    },
+    "storage": {
+      "status": "root_missing_or_unsafe"
+    }
+  },
+  "missing_approvals": [
+    "annotation_provenance_and_coverage_evidence",
+    "authorization_to_stage_real_recordings",
+    "dataset_terms_review",
+    "explicit_real_data_processing_and_training_authorization",
+    "faculty_seizure_research_guidance_and_cohort_review",
+    "institutional_ethics_determination"
+  ],
+  "patient_split": {
+    "test": [
+      "chb06",
+      "chb10"
+    ],
+    "train": [
+      "chb02",
+      "chb05",
+      "chb08"
+    ],
+    "validation": [
+      "chb09"
+    ]
+  },
+  "ready_for_real_data_processing": false,
+  "schema_version": "chbmit-pilot-readiness-v1"
+}

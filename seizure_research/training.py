@@ -15,14 +15,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
-import os
 import platform
 import shutil
 import sys
 from collections import Counter
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timezone
+from importlib.metadata import version
 from pathlib import Path
 from typing import Literal, Sequence
 
@@ -37,7 +36,7 @@ from .events import ScoredWindow, evaluate_events, select_validation_threshold, 
 from .features import (
     FEATURE_VERSION, extract_approved_recording_features, feature_names,
 )
-from .ingestion import CohortManifest, load_plan, validate_manifest
+from .ingestion import CohortManifest, validate_manifest
 from .preprocessing import PreprocessingConfig
 from .schemas import EEGRecording, ResearchSchema, SHA256, Text
 from .splitting import (
@@ -110,7 +109,7 @@ class PilotRunConfig(ResearchSchema):
     chunk_seconds: float = Field(default=300.0, gt=0, le=300, allow_inf_nan=False)
     halo_seconds: float = Field(default=60.0, gt=0, le=300, allow_inf_nan=False)
     max_decoded_samples: int = Field(default=2_000_000, ge=1, le=10_000_000)
-    positive_occupancy: float = Field(default=0.5, gt=0, le=1, allow_inf_nan=False)
+    positive_occupancy: Literal[0.5] = 0.5
     seed: int = 42
     n_estimators: int = Field(default=300, ge=1, le=2000)
     max_depth: int = Field(default=3, ge=1, le=12)
@@ -152,7 +151,7 @@ class DiskBudget:
         used = self.used_bytes()
         if used + additional_bytes > self.cap_bytes:
             raise OSError("pilot_storage_cap_exceeded")
-        free = shutil.disk_usage(self.root).free
+        free = min(shutil.disk_usage(self.root).free, shutil.disk_usage("/").free)
         if free - additional_bytes < self.reserve_bytes:
             raise OSError("minimum_system_free_space_reserve_would_be_violated")
 
@@ -267,6 +266,14 @@ def _sha256_file(path: Path) -> str:
         while chunk := stream.read(1024 * 1024):
             digestor.update(chunk)
     return digestor.hexdigest()
+
+
+def _write_budgeted_json(path: Path, payload: dict, budget: DiskBudget) -> None:
+    data = (json.dumps(payload, sort_keys=True, indent=2, allow_nan=False) + "\n").encode()
+    budget.check(len(data))
+    with path.open("xb") as stream:
+        stream.write(data)
+    budget.check()
 
 
 @dataclass(frozen=True)
@@ -438,6 +445,7 @@ def train_xgboost(
         provenance = {
             "schema_version": "seizure-xgb-model-v1", "model_type": "xgboost_cpu_binary_classifier",
             "experiment_id": config.experiment_id, "feature_version": FEATURE_VERSION,
+            "trained_at_utc": datetime.now(timezone.utc).isoformat(),
             "feature_names": train.feature_names, "feature_count": len(train.feature_names),
             "cohort_manifest_sha256": cohort_sha256,
             "annotation_evidence_sha256": annotation_evidence_sha256,
@@ -454,16 +462,18 @@ def train_xgboost(
             "config": config.model_dump(mode="json"),
             "runtime": {"python": platform.python_version(), "numpy": np.__version__,
                         "scipy": scipy.__version__, "scikit_learn": sklearn.__version__,
-                        "xgboost": xgb.__version__},
+                        "xgboost": xgb.__version__, "pyarrow": version("pyarrow"),
+                        "pydantic": version("pydantic")},
             "clinical_validation": False,
         }
         provenance["model_sha256"] = _sha256_file(output / "xgboost.json")
         provenance["scaler_sha256"] = _sha256_file(output / "scaler.npz")
-        code_files = (Path(__file__), Path(__file__).with_name("features.py"),
-                      Path(__file__).with_name("events.py"),
-                      Path(__file__).with_name("preprocessing.py"),
-                      Path(__file__).with_name("waveform.py"))
-        provenance["code_sha256"] = digest({path.name: _sha256_file(path) for path in code_files})
+        provenance["validation_selection_sha256"] = _sha256_file(output / "validation_selection.json")
+        code_root = Path(__file__).parent
+        code_hashes = {path.relative_to(code_root).as_posix(): _sha256_file(path)
+                       for path in sorted(code_root.rglob("*.py"))}
+        provenance["code_files_sha256"] = code_hashes
+        provenance["code_sha256"] = digest(code_hashes)
         (output / "provenance.json").write_text(
             json.dumps(provenance, sort_keys=True, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     except Exception:
@@ -502,17 +512,60 @@ def evaluate_xgboost_test(
     test_patients = {item.patient_group_id for item in split_manifest.assignments if item.split == "test"}
     test_recordings = tuple(item for item in recordings if item.patient_group_id in test_patients)
     metrics = evaluate_events(test_recordings, scored, candidates)
+    windows = [{"recording_id": item.recording_id,
+                "patient_group_id": item.patient_group_id,
+                "start_seconds": item.start_seconds,
+                "end_seconds": item.end_seconds,
+                "probability": item.probability,
+                "split": item.split} for item in scored]
+    candidate_rows = [_jsonable(item) for item in candidates]
     return {"threshold": run["threshold"], "metrics": metrics, "candidates": candidates,
-            "clinical_validation": False}
+            "prediction_windows": windows, "candidate_events": candidate_rows,
+            "provenance": {
+                "model_sha256": run["provenance"]["model_sha256"],
+                "cohort_manifest_sha256": run["provenance"]["cohort_manifest_sha256"],
+                "split_manifest_sha256": run["provenance"]["split_manifest_sha256"],
+                "validation_threshold": run["threshold"],
+                "threshold_selected_on": "validation",
+                "evaluation_partition": "test",
+                "clinical_validation": False,
+            }, "clinical_validation": False}
 
 
 def run_approved_pilot(root: Path | str, manifest: CohortManifest,
                        config: PreprocessingConfig, annotation_evidence: AnnotationEvidenceManifest,
                        output_dir: Path | str, *, authorized: bool = False,
-                       run_config: PilotRunConfig = PilotRunConfig()) -> dict:
+                       run_config: PilotRunConfig = PilotRunConfig(),
+                       cohort_manifest_path: Path | str | None = None,
+                       preprocessing_config_path: Path | str | None = None,
+                       annotation_evidence_path: Path | str | None = None,
+                       approval_record_path: Path | str | None = None,
+                       file_manifest_path: Path | str | None = None) -> dict:
     """End-to-end extraction, train/validation selection, then frozen test score."""
     if not authorized:
         raise PermissionError("explicit_real_data_pilot_authorization_required")
+    required_paths = (cohort_manifest_path, preprocessing_config_path,
+                      annotation_evidence_path, approval_record_path)
+    if any(path is None for path in required_paths):
+        raise PermissionError("readiness_and_human_approval_inputs_required")
+    # Re-run the read-only D4 gate at the training boundary. This verifies all
+    # staged source hashes and review evidence before the first EDF decode.
+    from .readiness import check_readiness
+    readiness = check_readiness(
+        root=root, cohort_manifest_path=cohort_manifest_path,
+        preprocessing_config_path=preprocessing_config_path,
+        annotation_evidence_path=annotation_evidence_path,
+        approval_record_path=approval_record_path,
+        file_manifest_path=file_manifest_path or Path(__file__).resolve().parents[1]
+        / "docs" / "chbmit_pilot_file_manifest.json")
+    if not readiness["ready_for_real_data_processing"]:
+        raise PermissionError("pilot_readiness_or_human_approval_gate_failed")
+    if (readiness["checks"].get("cohort_manifest", {}).get("sha256") != manifest.sha256
+            or AnnotationEvidenceManifest.model_validate(annotation_evidence).sha256
+            != AnnotationEvidenceManifest.model_validate(_load_json(annotation_evidence_path)).sha256
+            or PreprocessingConfig.model_validate(config).model_dump(mode="json")
+            != PreprocessingConfig.model_validate(_load_json(preprocessing_config_path)).model_dump(mode="json")):
+        raise PermissionError("training_inputs_differ_from_readiness_review")
     records = validate_pilot_cohort(manifest, annotation_evidence, root)
     validate_pilot_preprocessing(config)
     by_subject = {record.subject_id: record.patient_group_id for record in records}
@@ -577,12 +630,11 @@ def run_approved_pilot(root: Path | str, manifest: CohortManifest,
             "clinical_validation": False,
         }
         budget.check()
-        (output / "feature_manifest.json").write_text(
-            json.dumps(feature_manifest, sort_keys=True, indent=2, allow_nan=False) + "\n",
-            encoding="utf-8")
+        _write_budgeted_json(output / "feature_manifest.json", feature_manifest, budget)
         split_manifest_path = output / "split_manifest.json"
-        split_manifest_path.write_text(json.dumps(split_manifest.model_dump(mode="json"),
-                                                 sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        _write_budgeted_json(split_manifest_path, split_manifest.model_dump(mode="json"), budget)
+        _write_budgeted_json(output / "cohort_manifest.json", manifest.model_dump(mode="json"), budget)
+        _write_budgeted_json(output / "preprocessing.json", config.model_dump(mode="json"), budget)
         annotation_hash = annotation_evidence.sha256
         def combine(split: str, recording_ids: Sequence[str]) -> FeatureTable:
             paths = [Path(shards[item]["path"]) for item in recording_ids]
@@ -599,13 +651,24 @@ def run_approved_pilot(root: Path | str, manifest: CohortManifest,
             train, validation, recordings=records, split_manifest=split_manifest,
             cohort_sha256=manifest.sha256, annotation_evidence_sha256=annotation_hash,
             output_dir=output / "model", config=run_config, storage=budget, authorized=True)
+        # Bind the model to the reviewed source inventory and exact run artifacts.
+        run["provenance"].update({
+            "feature_manifest_sha256": digest(feature_manifest),
+            "preprocessing_config_sha256": digest(config.model_dump(mode="json")),
+            "file_manifest_sha256": readiness["checks"]["file_manifest"]["sha256"],
+            "approval_record_sha256": digest(_load_json(approval_record_path)),
+        })
+        provenance_path = output / "model" / "provenance.json"
+        provenance_data = json.dumps(run["provenance"], sort_keys=True, indent=2, allow_nan=False) + "\n"
+        budget.check(len(provenance_data.encode()))
+        provenance_path.write_text(provenance_data, encoding="utf-8")
         # Test shards are loaded only after the artifact and validation threshold are frozen.
         test = combine("test", ids_by_split["test"])
         test_result = evaluate_xgboost_test(run, test, recordings=records,
                                             split_manifest=split_manifest)
-        test_json = _jsonable(test_result)
-        (output / "test_evaluation.json").write_text(
-            json.dumps(test_json, sort_keys=True, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+        prediction_payload, evaluation_payload = build_test_artifact_payloads(test_result)
+        _write_budgeted_json(output / "test_predictions.json", prediction_payload, budget)
+        _write_budgeted_json(output / "test_evaluation.json", evaluation_payload, budget)
         budget.check()
         return {"split_manifest": split_manifest, "feature_shards": shards,
                 "model": run, "test_evaluation": test_result, "clinical_validation": False}
@@ -645,6 +708,34 @@ def _jsonable(value):
     return value
 
 
+def build_test_artifact_payloads(test_result: dict) -> tuple[dict, dict]:
+    """Bind test predictions and metrics to the frozen model and split."""
+    provenance = dict(test_result["provenance"])
+    prediction_payload = {
+        "schema_version": "seizure-window-predictions-v1",
+        "dataset": "CHB-MIT Scalp EEG Database v1.0.0",
+        "split": "test", "provenance": dict(provenance),
+        "candidate_events": _jsonable(test_result["candidate_events"]),
+        "windows": _jsonable(test_result["prediction_windows"]),
+    }
+    evaluation_payload = {
+        "schema_version": "seizure-event-evaluation-v1",
+        "dataset": "CHB-MIT Scalp EEG Database v1.0.0",
+        "provenance": dict(provenance),
+        "metrics": _jsonable(test_result["metrics"]),
+        "evaluated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "clinical_validation": False,
+    }
+    evaluation_hash = digest(evaluation_payload)
+    evaluation_payload["evaluation_artifact_sha256"] = evaluation_hash
+    prediction_payload["provenance"]["evaluation_artifact_sha256"] = evaluation_hash
+    prediction_payload["provenance"]["prediction_artifact_sha256"] = digest({
+        "candidate_events": prediction_payload["candidate_events"],
+        "windows": prediction_payload["windows"],
+    })
+    return prediction_payload, evaluation_payload
+
+
 def _load_json(path: str):
     def pairs(items):
         value = {}
@@ -659,24 +750,66 @@ def _load_json(path: str):
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
+    plan = sub.add_parser("plan-pilot", help="Print the frozen run stages without reading EEG")
+    plan.add_argument("--file-manifest", default=str(Path(__file__).resolve().parents[1]
+                                                          / "docs" / "chbmit_pilot_file_manifest.json"))
+    plan.add_argument("--root", default="/mnt/approved/neurosense/chbmit-pilot",
+                      help="Display only; this command does not inspect or create this path")
     pilot = sub.add_parser("run-pilot", help="Extract and train on an explicitly reviewed local cohort")
     pilot.add_argument("--root", required=True, help="Authorized local source root; no download is attempted")
     pilot.add_argument("--cohort-manifest", required=True)
     pilot.add_argument("--preprocessing-config", required=True)
     pilot.add_argument("--annotation-evidence", required=True)
+    pilot.add_argument("--approval-record", required=True,
+                       help="D4 record with dataset, institutional, faculty, staging, and processing decisions")
+    pilot.add_argument("--file-manifest", default=str(Path(__file__).resolve().parents[1]
+                                                        / "docs" / "chbmit_pilot_file_manifest.json"))
     pilot.add_argument("--output-dir", required=True)
     pilot.add_argument("--approve-real-data-processing", action="store_true",
                        help="Explicitly authorize this local real-recording run")
     args = parser.parse_args(argv)
     try:
+        if args.command == "plan-pilot":
+            from .readiness import _check_file_manifest
+            manifest, manifest_hash = _check_file_manifest(Path(args.file_manifest))
+            plan_output = {
+                "status": "dry_run_only", "reads_patient_eeg": False,
+                "creates_files": False, "downloads_data": False,
+                "dataset": manifest["dataset"], "manifest_sha256": manifest_hash,
+                "recordings": len(manifest["recordings"]),
+                "patients": manifest["split"],
+                "alias_safeguard": manifest["split"]["alias_safeguard"],
+                "root_display_only": args.root,
+                "stages": [
+                    "D4 readiness: verify staged hashes, cohort, annotations, quality, storage, and human approvals",
+                    "Incrementally decode approved EDF chunks and write train/validation/test feature shards",
+                    "Fit normalization and CPU XGBoost on training patients; select iteration and event threshold on validation patient(s)",
+                    "Freeze model and validation threshold before loading held-out test feature shards",
+                    "Write test predictions, event metrics, per-patient results, and provenance under the external run root",
+                ],
+                "blocked_until": ["dataset-use approval", "institutional ethics determination",
+                                  "faculty cohort review", "annotation/quality review",
+                                  "staging approval", "separate processing/training approval"],
+            }
+            print(json.dumps(plan_output, sort_keys=True, indent=2, allow_nan=False))
+            return 0
         manifest = CohortManifest.model_validate(_load_json(args.cohort_manifest))
         config = PreprocessingConfig.model_validate(_load_json(args.preprocessing_config))
         evidence = AnnotationEvidenceManifest.model_validate(_load_json(args.annotation_evidence))
-        run_approved_pilot(args.root, manifest, config, evidence, args.output_dir,
-                           authorized=args.approve_real_data_processing)
+        run_approved_pilot(
+            args.root, manifest, config, evidence, args.output_dir,
+            authorized=args.approve_real_data_processing,
+            cohort_manifest_path=args.cohort_manifest,
+            preprocessing_config_path=args.preprocessing_config,
+            annotation_evidence_path=args.annotation_evidence,
+            approval_record_path=args.approval_record,
+            file_manifest_path=args.file_manifest)
+        print(json.dumps({"status": "completed", "output_dir": str(Path(args.output_dir).resolve()),
+                          "clinical_validation": False}, sort_keys=True))
         return 0
-    except (ValueError, OSError, PermissionError, KeyError):
-        print(json.dumps({"error": "pilot_input_gate_or_execution_failed"}), file=sys.stderr)
+    except (ValueError, OSError, PermissionError, KeyError, TypeError) as exc:
+        print(json.dumps({"status": "blocked", "error": "pilot_input_gate_or_execution_failed",
+                          "reason": str(exc)}), file=sys.stderr)
         return 2
 
 

@@ -52,6 +52,9 @@ def _reset_user_workspace() -> None:
         "workspace_page",
     ):
         st.session_state.pop(key, None)
+    for key in tuple(st.session_state):
+        if key.startswith(("synthetic_eeg_player_", "approved_edf_player_", "archive_edf_")):
+            st.session_state.pop(key, None)
 
 
 def _clear_auth() -> None:
@@ -200,6 +203,16 @@ def _navigate(page: str) -> None:
 
 def render_overview(snapshot: dict) -> None:
     st.title("Overview")
+    st.subheader("EEG Seizure Research")
+    st.caption("Primary academic research focus · CHB-MIT cohort proposed, not staged · seizure model training pending · held-out evaluation unavailable")
+    st.button(
+        "Open EEG Seizure Research",
+        key="open_eeg_seizure_research",
+        type="primary",
+        width="stretch",
+        on_click=_navigate,
+        args=("EEG Seizure Research",),
+    )
     st.caption(f"Sensor mode: {snapshot['sensor_mode'].upper()} · Live authenticated workspace")
     _render_metrics(snapshot)
     st.button(
@@ -342,7 +355,8 @@ def main() -> None:
             st.rerun()
         page = st.radio(
             "Workspace",
-            ["Overview", "Live EEG", "Webcam Monitoring", "Sessions", "Analytics", "Profile"],
+            ["Overview", "Live EEG", "Webcam Monitoring", "EEG Seizure Research",
+             "Sessions", "Analytics", "Profile"],
             key="workspace_page",
             label_visibility="collapsed",
         )
@@ -353,6 +367,10 @@ def main() -> None:
     elif page == "Webcam Monitoring": render_webcam()
     elif page == "Sessions": render_sessions(user)
     elif page == "Analytics": render_analytics(user)
+    elif page == "EEG Seizure Research":
+        from dashboard.seizure_lab import render_seizure_lab
+        with st.container(key="seizure_research_workspace"):
+            render_seizure_lab(st)
     else: render_profile(user)
     if page == "Live EEG":
         sleep(2)

@@ -1,73 +1,121 @@
-# CHB-MIT Pilot: Staging Instructions (Not Executed)
+# CHB-MIT pilot staging instructions
 
-**Do not start until the faculty/institutional checklist is complete and the
-project owner explicitly approves staging.** These are instructions only; no
-download has been run.
+These commands are instructions only. No EEG was downloaded or processed for
+Checkpoint D3. The exact 25-file allowlist, source URLs, verified byte sizes,
+SHA-256 values, relative local destinations, and split are in
+[`chbmit_pilot_file_manifest.json`](chbmit_pilot_file_manifest.json). Files go
+under `<root>/<manifest path>`; choose an approved root outside the Git
+worktree, such as `/mnt/approved/neurosense/chbmit-pilot`.
 
-The machine-readable [file manifest](chbmit_pilot_file_manifest.json) lists
-all twelve selected EDF URLs, their split and annotation role, the six
-patient-summary URLs, six official `SHA256SUMS` URLs, and the six `.edf.seizures`
-URLs. All links point to the official PhysioNet v1.0.0 distribution. The
-manifest intentionally has no per-file expected digest or exact size yet;
-obtain those from the official checksum files and HTTP metadata rather than
-copying guessed values.
+PhysioNet v1.0.0 exposes one dataset-wide `SHA256SUMS.txt`, not per-patient
+`SHA256SUMS` files. The staging tool fetches that file first, verifies its
+entries against the pinned cohort manifest, then retrieves only the 12 EDFs,
+six patient summaries, and six `.edf.seizures` sidecars. It rejects altered
+sizes, hashes, paths, or patient assignments. It performs bounded 1 MiB reads,
+checks the 5 GiB cap and 20 GiB free-space reserve before every file, keeps
+partial data out of Git, and records no EEG waveform arrays to disk.
 
-1. Use a dedicated external directory, for example
-   `/mnt/approved/chbmit-pilot`, never a directory inside this Git repository.
-   Create it only after approval.
-2. Before each transfer, query the exact URL size with `wget --spider
-   --server-response <URL>` or another approved HTTPS metadata tool. Record
-   its `Content-Length`. Check current root usage and filesystem free space:
+The 12 EDFs total **1,004,143,360 bytes**. All 25 staged files, including the
+single checksum document, total **1,004,239,275 bytes (0.935 GiB)**. Metadata
+was checked on 2026-10-12. The expected bytes are below the 5 GiB cap. Current
+`/` free space at the final check was 47,780,118,528 bytes; staging the listed
+sources would leave 46,775,879,253 bytes free, above the required
+21,474,836,480-byte reserve.
+These figures are planning snapshots; rerun the preflight immediately before
+each real transfer and processing stage.
 
-   ```bash
-   du -sb /mnt/approved/chbmit-pilot
-   df -B1 /mnt/approved/chbmit-pilot
-   ```
+## Review sequence
 
-   Do not begin a file transfer unless current root bytes plus that file's
-   expected bytes remain at or below 5 GiB, and free bytes minus that file's
-   expected bytes remain at or above 20 GiB. Repeat these checks before every
-   file; do not download archives or whole patient directories.
-3. Download only URLs enumerated by the manifest, preserving their relative
-   paths. For each item, the command shape is
-   `wget --https-only --continue --directory-prefix=/mnt/approved/chbmit-pilot/<case> <official-URL>`.
-   First fetch the six `SHA256SUMS` files, then the six summary files, twelve
-   EDFs, and six seizure sidecars. Do not fetch unrelated EDFs.
-4. In each case directory, verify every staged manifest file against the
-   downloaded official checksum list, for example:
+1. Faculty provides seizure-focused guidance and reviews the research scope,
+   exact recordings, and frozen patient split.
+2. Project owner and faculty document the PhysioNet license/data-use review
+   and citation requirements.
+3. The responsible institutional office records its ethics/IRB determination
+   (approval, exemption, or not required) and evidence.
+4. A qualified human reviewer reviews montage, age metadata, quality, and all
+   annotation coverage, including full-duration review of each proposed
+   background recording and reconciliation of each seizure sidecar with its
+   summary.
+5. Faculty/institution separately authorizes staging these exact files and
+   records the file-manifest SHA-256 in `staging_manifest_sha256`.
+6. Only after data are staged, reviewed, and readiness is clear may faculty
+   separately authorize real-recording processing/training in the approval
+   record. This is not clinical validation.
 
-   ```bash
-   cd /mnt/approved/chbmit-pilot/chb02
-   sha256sum --check --ignore-missing SHA256SUMS
-   ```
+The blank approval record and review checklist are templates, not evidence of
+any approval.
 
-   Preserve the official checksum files. Record actual byte sizes and
-   independently verified hashes in the reviewed cohort manifest. If any
-   expected file is missing, mismatched, or differs from the selected
-   recording/annotation plan, stop and return to faculty review.
-5. Run the read-only readiness command after all review artifacts and files
-   are staged. It must report no blockers before anyone separately authorizes
-   Checkpoint D3 processing.
+## Read-only preflight
 
-The command is read-only and prints its JSON report to the terminal. Use the
-human-completed [approval record](chbmit_pilot_approval_record_template.json)
-with its cohort hash and evidence references filled in; the pending template
-is intentionally invalid and cannot produce a ready result.
+```bash
+python -m seizure_research.staging plan \
+  --root /mnt/approved/neurosense/chbmit-pilot
+```
+
+This prints the exact download plan and current storage calculation. It does
+not make network requests or create the root directory. Stop if the command
+reports a cap, free-space, manifest, or path blocker.
+
+## Download after explicit staging approval
+
+Complete an approval record outside the repository. It must show approved
+dataset terms, a completed institutional ethics determination, faculty review,
+an explicit staging authorization, and the exact `staging_manifest_sha256`
+printed by the preflight. Record the same absolute dataset directory in
+`staging_root`, set `storage_persistence_confirmed` only after the custodian
+confirms persistence, and provide `storage_policy_ref` identifying the actual
+access, retention, backup and deletion decisions. `/tmp`, `/var/tmp`, `/run`
+and `/dev/shm` are rejected for real staging and processing. The example
+`/mnt/approved/...` is not an existing or approved location in this checkout.
+Keep `faculty-approval.json` directly inside the dataset root; this is also
+where the dashboard reads it. Then run:
+
+```bash
+python -m seizure_research.staging stage \
+  --root /mnt/approved/neurosense/chbmit-pilot \
+  --approval-record /mnt/approved/neurosense/chbmit-pilot/faculty-approval.json \
+  --confirm-authorized-staging
+```
+
+The staging command is a real network transfer and must not be run until the
+listed human decisions are recorded. It downloads no archive or unrelated
+recording. On interruption, it refuses an existing `.part` file and reports a
+blocker; have the data custodian review and remove only a clearly incomplete
+transfer before retrying.
+
+## Readiness and bounded EEG smoke test
+
+After staging, create reviewed cohort, preprocessing, and annotation-evidence
+manifests outside the repository. Readiness remains fail-closed until files,
+hashes, full annotation coverage, data-use/ethics/faculty decisions, staging
+authorization, and separate processing/training authorization are complete:
 
 ```bash
 python -m seizure_research.readiness check \
-  --root /mnt/approved/chbmit-pilot \
-  --cohort-manifest /mnt/approved/chbmit-pilot/cohort-manifest.json \
-  --preprocessing-config /mnt/approved/chbmit-pilot/preprocessing.json \
-  --annotation-evidence /mnt/approved/chbmit-pilot/annotation-evidence.json \
-  --approval-record /mnt/approved/chbmit-pilot/faculty-approval.json \
-  --file-manifest docs/chbmit_pilot_file_manifest.json
+  --root /mnt/approved/neurosense/chbmit-pilot \
+  --cohort-manifest /mnt/approved/neurosense/chbmit-pilot/cohort-manifest.json \
+  --preprocessing-config /mnt/approved/neurosense/chbmit-pilot/preprocessing.json \
+  --annotation-evidence /mnt/approved/neurosense/chbmit-pilot/annotation-evidence.json \
+  --approval-record /mnt/approved/neurosense/chbmit-pilot/faculty-approval.json
 ```
 
-Exit status `0` means the local readiness gates passed. Exit status `2` means
-the JSON report lists blockers or missing approvals. Passing readiness does
-not itself run the approved-data pipeline.
+Only after that command has no blockers and real-data processing is separately
+authorized, decode one configured five-second window without saving signal
+arrays:
 
-The previous planning estimate was approximately 0.96 GB of raw EDF data. It
-is not a substitute for preflight size checks: this selected subset's exact
-size must be calculated from the official file metadata before staging.
+```bash
+python -m seizure_research.smoke \
+  --root /mnt/approved/neurosense/chbmit-pilot \
+  --recording chb02/chb02_16.edf \
+  --cohort-manifest /mnt/approved/neurosense/chbmit-pilot/cohort-manifest.json \
+  --preprocessing-config /mnt/approved/neurosense/chbmit-pilot/preprocessing.json \
+  --annotation-evidence /mnt/approved/neurosense/chbmit-pilot/annotation-evidence.json \
+  --approval-record /mnt/approved/neurosense/chbmit-pilot/faculty-approval.json \
+  --file-manifest docs/chbmit_pilot_file_manifest.json \
+  --confirm-authorized-processing
+```
+
+The smoke command checks readiness, the pinned file SHA-256, configured
+channel labels/rates, then reads a bounded first window. It does not train or
+write generated artifacts. A successful smoke test does not replace the
+separate full pilot command and is not clinical validation.

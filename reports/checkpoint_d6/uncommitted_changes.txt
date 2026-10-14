@@ -1,0 +1,71 @@
+D6 final uncommitted working-tree inventory
+No commit, push, staging-to-Git or clinical download was performed.
+
+Pre-existing work preserved without D6 edits:
+  .gitignore
+  dashboard/app.py
+  docs/chbmit_pilot_file_manifest.json
+  docs/checkpoint_d1_pipeline.md
+  docs/checkpoint_d2_faculty_review.md
+  seizure_research/smoke.py
+  tests/test_dashboard_auth.py
+  tests/test_seizure_readiness.py
+  tests/test_seizure_training_pipeline.py
+
+Pre-existing work extended/fixed by D6:
+  dashboard/seizure_lab.py
+  docs/chbmit_pilot_approval_record_template.json
+  docs/chbmit_pilot_download_instructions.md
+  docs/chbmit_pilot_human_review_checklist.md
+  docs/checkpoint_d3_staging_plan.md
+  docs/checkpoint_d4_authorization_status.md
+  docs/checkpoint_d5_seizure_lab.md
+  seizure_research/readiness.py
+  seizure_research/staging.py
+  seizure_research/training.py
+  tests/test_dashboard_seizure_lab.py
+
+New D6 work:
+  docs/checkpoint_d6_readiness.md
+  seizure_research/artifacts.py
+  tests/seizure_synthetic_fixture.py
+  tests/test_seizure_end_to_end.py
+  reports/checkpoint_d6/ (all evidence files listed below)
+
+Exact git status --porcelain=v1 --untracked-files=all:
+ M .gitignore
+ M dashboard/app.py
+ M docs/chbmit_pilot_approval_record_template.json
+ M docs/chbmit_pilot_download_instructions.md
+ M docs/chbmit_pilot_file_manifest.json
+ M docs/chbmit_pilot_human_review_checklist.md
+ M docs/checkpoint_d1_pipeline.md
+ M docs/checkpoint_d2_faculty_review.md
+ M seizure_research/readiness.py
+ M seizure_research/training.py
+ M tests/test_dashboard_auth.py
+ M tests/test_seizure_readiness.py
+ M tests/test_seizure_training_pipeline.py
+?? dashboard/seizure_lab.py
+?? docs/checkpoint_d3_staging_plan.md
+?? docs/checkpoint_d4_authorization_status.md
+?? docs/checkpoint_d5_seizure_lab.md
+?? docs/checkpoint_d6_readiness.md
+?? reports/checkpoint_d6/current_readiness.json
+?? reports/checkpoint_d6/dashboard_tests.txt
+?? reports/checkpoint_d6/git_diff_check.txt
+?? reports/checkpoint_d6/integration_tests.txt
+?? reports/checkpoint_d6/javascript_tests.txt
+?? reports/checkpoint_d6/preservation.json
+?? reports/checkpoint_d6/preservation_before.json
+?? reports/checkpoint_d6/python_baseline.txt
+?? reports/checkpoint_d6/python_tests.txt
+?? reports/checkpoint_d6/staging_plan.json
+?? reports/checkpoint_d6/training_plan.json
+?? reports/checkpoint_d6/uncommitted_changes.txt
+?? seizure_research/artifacts.py
+?? seizure_research/smoke.py
+?? seizure_research/staging.py
+?? tests/seizure_synthetic_fixture.py
+?? tests/test_dashboard_seizure_lab.py
+?? tests/test_seizure_end_to_end.py

@@ -1,0 +1,18 @@
+/home/yahyasiddiqui/.config/matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /tmp/matplotlib-42fci6uj because there was an issue with the default path (/home/yahyasiddiqui/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+test_exact_five_gib_cap_and_twenty_gib_reserve_boundaries (test_seizure_end_to_end.StorageAndViewerBoundaryTests.test_exact_five_gib_cap_and_twenty_gib_reserve_boundaries) ... ok
+test_long_annotations_are_clipped_and_offscreen_events_omitted (test_seizure_end_to_end.StorageAndViewerBoundaryTests.test_long_annotations_are_clipped_and_offscreen_events_omitted) ... ok
+test_persistent_location_requires_custodian_attestation_and_matching_root (test_seizure_end_to_end.StorageAndViewerBoundaryTests.test_persistent_location_requires_custodian_attestation_and_matching_root) ... ok
+test_actual_written_results_load_and_render_with_canonical_recording_ids (test_seizure_end_to_end.SyntheticEndToEndTests.test_actual_written_results_load_and_render_with_canonical_recording_ids) ... ok
+test_bounded_features_patient_split_train_only_scaler_and_validation_freeze (test_seizure_end_to_end.SyntheticEndToEndTests.test_bounded_features_patient_split_train_only_scaler_and_validation_freeze) ... ok
+test_corruption_wrong_patients_metrics_and_approvals_fail_closed (test_seizure_end_to_end.SyntheticEndToEndTests.test_corruption_wrong_patients_metrics_and_approvals_fail_closed) ... ok
+test_generated_edf_staging_checksums_readiness_smoke_and_resume (test_seizure_end_to_end.SyntheticEndToEndTests.test_generated_edf_staging_checksums_readiness_smoke_and_resume) ... ok
+test_missing_model_and_malformed_results_render_unavailable_without_crashing (test_seizure_end_to_end.SyntheticEndToEndTests.test_missing_model_and_malformed_results_render_unavailable_without_crashing) ... ok
+test_partial_output_cannot_be_overwritten (test_seizure_end_to_end.SyntheticEndToEndTests.test_partial_output_cannot_be_overwritten) ... ok
+test_source_annotation_and_approval_failures_block_before_decode_or_training (test_seizure_end_to_end.SyntheticEndToEndTests.test_source_annotation_and_approval_failures_block_before_decode_or_training) ... ok
+test_unsupported_age_blocks_all_real_access_even_with_valid_artifacts (test_seizure_end_to_end.SyntheticEndToEndTests.test_unsupported_age_blocks_all_real_access_even_with_valid_artifacts) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 32.492s
+
+OK

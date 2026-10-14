@@ -40,21 +40,23 @@ patient stay in one partition. `chb01` and `chb21` are known aliases for the
 same participant in the source; the code preserves that canonical identity
 constraint and excludes both from this proposed cohort.
 
-The preceding planning estimate was about 0.96 GB of EDFs. Exact byte totals
-and expected hashes remain deliberately unset in
-[the machine-readable file manifest](chbmit_pilot_file_manifest.json); they
-must be checked against official per-patient `SHA256SUMS` files and local file
-sizes before any download is approved. Six summary files, six checksum files,
-and six `.edf.seizures` sidecars are also listed there. Full-record review is
-required for recordings proposed as background, including those with no
-summary seizure event.
+Checkpoint D3 verified exact EDF byte counts and hashes against PhysioNet's
+dataset-wide [`SHA256SUMS.txt`](https://physionet.org/content/chbmit/1.0.0/SHA256SUMS.txt)
+and metadata-only HTTP `Content-Length` headers. The twelve EDFs total
+1,004,143,360 bytes; all 25 files (including six summaries, six seizure
+sidecars, and the single global checksum file) total 1,004,239,275 bytes
+(0.935 GiB). The machine-readable manifest records the exact expected size,
+SHA-256, official source URL, and relative destination for each. Full-record
+review is still required for recordings proposed as background, including
+those with no summary seizure event.
 
 ## Storage, privacy, and reproducibility
 
 The external pilot directory has a **5 GiB hard cap**, including source EDFs,
 summaries, sidecars, and generated artifacts. The process must leave at least
-**20 GiB free** on the containing filesystem. The user previously reported
-45 GB free; space must be rechecked immediately before any approved download
+**20 GiB free** on the containing filesystem. At the D3 preflight, `/` had
+47,791,276,032 bytes free; staging the exact cohort would leave about 46.8 GB
+available. Space must be rechecked immediately before any approved download
 or processing stage. No recording or derivative belongs in Git, cloud storage,
 or an external model/API service. Keep access limited to approved project
 members, do not attempt re-identification, and follow institutional retention
@@ -95,8 +97,8 @@ Faculty and the institution should record decisions on:
 4. Who is qualified to review annotations and signal quality, and what
    evidence will document full-record coverage and the summary/sidecar
    reconciliation.
-5. Whether the 5 GiB cap, 20 GiB free-space reserve, and approximately 0.96 GB
-   planning estimate are acceptable after exact file sizes are verified.
+5. Whether the 5 GiB cap, 20 GiB free-space reserve, and exact 1,004,239,275
+   byte staging plan are acceptable.
 6. Whether to authorize downloading/staging the listed files, and separately
    whether to authorize real-recording processing and experimental training
    after readiness reports no blockers.

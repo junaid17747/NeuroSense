@@ -1,0 +1,16 @@
+/home/yahyasiddiqui/.config/matplotlib is not a writable directory
+Matplotlib created a temporary cache directory at /tmp/matplotlib-8h2qpnad because there was an issue with the default path (/home/yahyasiddiqui/.config/matplotlib); it is highly recommended to set the MPLCONFIGDIR environment variable to a writable directory, in particular to speed up the import of Matplotlib and to better support multiprocessing.
+test_annotation_and_experimental_prediction_overlays_are_aligned_separately (test_dashboard_seizure_lab.SeizureLabTests.test_annotation_and_experimental_prediction_overlays_are_aligned_separately) ... ok
+test_child_is_only_pilot_age_target_and_other_groups_are_unavailable (test_dashboard_seizure_lab.SeizureLabTests.test_child_is_only_pilot_age_target_and_other_groups_are_unavailable) ... ok
+test_empty_states_are_explicit_and_metrics_have_no_fake_values (test_dashboard_seizure_lab.SeizureLabTests.test_empty_states_are_explicit_and_metrics_have_no_fake_values) ... ok
+test_frozen_partitions_are_patient_disjoint_and_alias_safe (test_dashboard_seizure_lab.SeizureLabTests.test_frozen_partitions_are_patient_disjoint_and_alias_safe) ... ok
+test_real_prediction_gate_requires_readiness_and_processing_approval (test_dashboard_seizure_lab.SeizureLabTests.test_real_prediction_gate_requires_readiness_and_processing_approval) ... ok
+test_real_waveform_gate_blocks_before_edf_access (test_dashboard_seizure_lab.SeizureLabTests.test_real_waveform_gate_blocks_before_edf_access) ... ok
+test_self_hashed_artifacts_without_reviewed_cohort_are_unavailable (test_dashboard_seizure_lab.SeizureLabTests.test_self_hashed_artifacts_without_reviewed_cohort_are_unavailable) ... ok
+test_synthetic_dashboard_render_never_opens_real_edf (test_dashboard_seizure_lab.SeizureLabTests.test_synthetic_dashboard_render_never_opens_real_edf) ... ok
+test_synthetic_waveform_is_bounded_and_deterministic (test_dashboard_seizure_lab.SeizureLabTests.test_synthetic_waveform_is_bounded_and_deterministic) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.090s
+
+OK

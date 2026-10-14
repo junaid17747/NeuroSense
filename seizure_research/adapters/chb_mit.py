@@ -44,10 +44,32 @@ def _clock(value: str) -> int:
     return hours * 3600 + minutes * 60 + seconds
 
 
-def parse_summary(text: str, subject_id: str) -> tuple[SummaryRecording, ...]:
+def parse_summary(text: str, subject_id: str, *, filename: str | None = None) -> tuple[SummaryRecording, ...]:
     """Strictly parse all blocks. Missing counts/blocks never imply no seizures."""
     if not re.fullmatch(r"chb[0-9]{2}", subject_id):
         raise IngestionError("invalid_chb_subject_id")
+    if filename is not None:
+        # Validate the requested block and its active montage. An unrelated
+        # malformed annotation must not invalidate a reviewed, valid recording.
+        # The hash still binds the complete, unmodified official summary.
+        blocks = re.split(r"(?m)^File Name:\s*", text)
+        header = blocks[0]
+        selected = []
+        for block in blocks[1:]:
+            name = block.splitlines()[0].strip()
+            content, *changed = re.split(r"(?m)^Channels changed:\s*$", block, maxsplit=1)
+            if name == filename:
+                selected.append(header + "\nFile Name: " + content)
+            if changed:
+                rate = re.search(r"(?m)^Data Sampling Rate:.*$", header)
+                if rate is None:
+                    raise IngestionError("summary_missing_acquisition_metadata")
+                header = rate[0] + "\nChannels in EDF Files:\n" + changed[0]
+        if not selected:
+            raise IngestionError("recording_absent_from_summary")
+        if len(selected) != 1:
+            raise IngestionError("summary_duplicate_recording")
+        return parse_summary(selected[0], subject_id)
     records = []
     names = set()
     channels = []
@@ -139,7 +161,7 @@ def parse_summary(text: str, subject_id: str) -> tuple[SummaryRecording, ...]:
                 raise IngestionError("summary_duplicate_event_count")
             current["count"] = int(match[1])
             continue
-        match = re.fullmatch(r"Seizure(?: ([0-9]+))? (Start|End) Time: ([0-9]+(?:\.[0-9]+)?) seconds", line)
+        match = re.fullmatch(r"Seizure(?: ([0-9]+))? (Start|End) Time:\s+([0-9]+(?:\.[0-9]+)?) seconds", line)
         if match:
             index = int(match[1]) if match[1] else 1
             event = current["events"].setdefault(index, {})
@@ -160,7 +182,7 @@ def parse_summary(text: str, subject_id: str) -> tuple[SummaryRecording, ...]:
     return tuple(records)
 
 
-def inspect_summary(path: Path | str, subject_id: str) -> tuple[tuple[SummaryRecording, ...], str, int]:
+def inspect_summary(path: Path | str, subject_id: str, *, filename: str | None = None) -> tuple[tuple[SummaryRecording, ...], str, int]:
     with Path(path).open("rb") as stream:
         data = stream.read(MAX_SUMMARY_BYTES + 1)
     if len(data) > MAX_SUMMARY_BYTES:
@@ -169,7 +191,7 @@ def inspect_summary(path: Path | str, subject_id: str) -> tuple[tuple[SummaryRec
         text = data.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise IngestionError("summary_encoding_invalid") from exc
-    return parse_summary(text, subject_id), hashlib.sha256(data).hexdigest(), len(data)
+    return parse_summary(text, subject_id, filename=filename), hashlib.sha256(data).hexdigest(), len(data)
 
 
 class CHBMITAdapter:
@@ -199,7 +221,8 @@ class CHBMITAdapter:
                 or item.summary_path != f"{item.subject_id}/{item.subject_id}-summary.txt"):
             raise IngestionError("source_recording_identifier_mismatch")
 
-        summary, summary_sha, summary_size = inspect_summary(local_file(root, item.summary_path), item.subject_id)
+        summary, summary_sha, summary_size = inspect_summary(
+            local_file(root, item.summary_path), item.subject_id, filename=filename)
         if summary_sha != item.expected_summary_sha256:
             raise IngestionError("reviewed_summary_hash_mismatch")
         matches = [entry for entry in summary if entry.filename == filename]

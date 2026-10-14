@@ -1,0 +1,47 @@
+{
+  "alias_safeguard": [
+    "chb01",
+    "chb21"
+  ],
+  "blocked_until": [
+    "dataset-use approval",
+    "institutional ethics determination",
+    "faculty cohort review",
+    "annotation/quality review",
+    "staging approval",
+    "separate processing/training approval"
+  ],
+  "creates_files": false,
+  "dataset": "CHB-MIT Scalp EEG Database",
+  "downloads_data": false,
+  "manifest_sha256": "dc81f5f555e098806ebe977a6e553eee314e7b66a897a5620f037d44e2b79bcd",
+  "patients": {
+    "alias_safeguard": [
+      "chb01",
+      "chb21"
+    ],
+    "test": [
+      "chb06",
+      "chb10"
+    ],
+    "train": [
+      "chb02",
+      "chb05",
+      "chb08"
+    ],
+    "validation": [
+      "chb09"
+    ]
+  },
+  "reads_patient_eeg": false,
+  "recordings": 12,
+  "root_display_only": "/mnt/approved/neurosense/chbmit-pilot",
+  "stages": [
+    "D4 readiness: verify staged hashes, cohort, annotations, quality, storage, and human approvals",
+    "Incrementally decode approved EDF chunks and write train/validation/test feature shards",
+    "Fit normalization and CPU XGBoost on training patients; select iteration and event threshold on validation patient(s)",
+    "Freeze model and validation threshold before loading held-out test feature shards",
+    "Write test predictions, event metrics, per-patient results, and provenance under the external run root"
+  ],
+  "status": "dry_run_only"
+}

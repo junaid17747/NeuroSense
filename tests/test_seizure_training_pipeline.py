@@ -1,8 +1,11 @@
 """Synthetic-only tests for the D1 seizure feature and training path."""
 
 import hashlib
+import json
+import io
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
@@ -23,10 +26,11 @@ from seizure_research.preprocessing import (
 )
 from seizure_research.quality import QualityThresholds
 from seizure_research.schemas import AgeGroup
-from seizure_research.splitting import build_explicit_split_manifest, validate_split_manifest
+from seizure_research.splitting import build_explicit_split_manifest, digest, validate_split_manifest
 from seizure_research.training import (
     AnnotationEventEvidence, DiskBudget, FeatureTable, PilotRunConfig,
     RecordingAnnotationEvidence, patient_sample_weights, train_xgboost,
+    build_test_artifact_payloads, run_approved_pilot, main as training_main,
     validate_recording_annotation_evidence,
 )
 from seizure_research.waveform import EDFStreamReader
@@ -259,6 +263,48 @@ def _synthetic_table(split, patient, recording_id, rows=56):
 
 
 class SyntheticTrainingTests(unittest.TestCase):
+    def test_test_artifacts_bind_predictions_metrics_model_and_split(self):
+        provenance = {"model_sha256": "a" * 64, "cohort_manifest_sha256": "b" * 64,
+                      "split_manifest_sha256": "c" * 64, "validation_threshold": 0.5,
+                      "threshold_selected_on": "validation", "evaluation_partition": "test",
+                      "clinical_validation": False}
+        result = {"provenance": provenance, "prediction_windows": [{
+                      "recording_id": "chb06/chb06_01.edf", "patient_group_id": "p6",
+                      "start_seconds": 0.0, "end_seconds": 5.0,
+                      "probability": 0.25, "split": "test"}],
+                  "candidate_events": [], "metrics": {"event_sensitivity": None}}
+        predictions, evaluation = build_test_artifact_payloads(result)
+        self.assertEqual(evaluation["evaluation_artifact_sha256"],
+                         digest({key: value for key, value in evaluation.items()
+                                 if key != "evaluation_artifact_sha256"}))
+        self.assertEqual(predictions["provenance"]["evaluation_artifact_sha256"],
+                         evaluation["evaluation_artifact_sha256"])
+        self.assertNotIn("evaluation_artifact_sha256", provenance)
+        self.assertEqual(predictions["windows"][0]["split"], "test")
+        self.assertTrue(evaluation["evaluated_at_utc"].endswith("+00:00"))
+
+    def test_training_dry_run_plan_does_not_read_or_create_patient_data(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "not-created"
+            output = io.StringIO()
+            with patch.object(EDFStreamReader, "__enter__",
+                              side_effect=AssertionError("dry-run opened EDF")), \
+                    redirect_stdout(output):
+                result = training_main(["plan-pilot", "--root", str(root)])
+            plan = json.loads(output.getvalue())
+            self.assertEqual(result, 0)
+            self.assertFalse(root.exists())
+            self.assertFalse(plan["reads_patient_eeg"])
+            self.assertFalse(plan["creates_files"])
+            self.assertEqual(plan["recordings"], 12)
+            self.assertEqual(plan["patients"]["validation"], ["chb09"])
+
+    def test_end_to_end_training_requires_readiness_inputs_and_human_record(self):
+        with self.assertRaisesRegex(PermissionError, "explicit_real_data_pilot_authorization"):
+            run_approved_pilot(None, None, None, None, None)
+        with self.assertRaisesRegex(PermissionError, "readiness_and_human_approval_inputs"):
+            run_approved_pilot(None, None, None, None, None, authorized=True)
+
     def test_trainer_rejects_test_shard_as_validation_before_fitting(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -314,6 +360,7 @@ class SyntheticTrainingTests(unittest.TestCase):
             self.assertAlmostEqual(run["scaler"].mean_[1], float(train.values[:, 1].mean()))
             self.assertIn(run["threshold"], run["validation_curve"])
             self.assertFalse(run["provenance"]["clinical_validation"])
+            self.assertTrue(run["provenance"]["trained_at_utc"].endswith("+00:00"))
             self.assertTrue((root / "model" / "xgboost.json").is_file())
 
 

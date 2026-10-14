@@ -1,0 +1,215 @@
+{
+  "dataset_page": "https://physionet.org/content/chbmit/1.0.0/",
+  "edf_bytes": 1004143360,
+  "file_count": 25,
+  "files": [
+    {
+      "expected_bytes": 73298,
+      "expected_sha256": null,
+      "kind": "official_checksum_manifest",
+      "path": "SHA256SUMS.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/SHA256SUMS.txt"
+    },
+    {
+      "expected_bytes": 4471,
+      "expected_sha256": "a4a84999f666652479bc0340d49c98f9c018a53b155e3164500f035dc35b025a",
+      "kind": "summary",
+      "path": "chb02/chb02-summary.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb02/chb02-summary.txt"
+    },
+    {
+      "expected_bytes": 4911,
+      "expected_sha256": "6f8c1724c71aaee20523d138129c4f4366ed1f9bb7f220b146fc503661b6a3b4",
+      "kind": "summary",
+      "path": "chb05/chb05-summary.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb05/chb05-summary.txt"
+    },
+    {
+      "expected_bytes": 3083,
+      "expected_sha256": "87ec0c8cb06d61154634bbcf900f2e525e83778ea9bc4e7a2b3143e27bbfe019",
+      "kind": "summary",
+      "path": "chb06/chb06-summary.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb06/chb06-summary.txt"
+    },
+    {
+      "expected_bytes": 2946,
+      "expected_sha256": "d409ff3a74cb0b85310bd2f4428110e991d9e70969cf4ae8cc41de1671a3bd10",
+      "kind": "summary",
+      "path": "chb08/chb08-summary.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb08/chb08-summary.txt"
+    },
+    {
+      "expected_bytes": 3245,
+      "expected_sha256": "1ac673eacfa9d2fabb4f065aaed69ca79ca558c662e931383e0b4a39104d31b7",
+      "kind": "summary",
+      "path": "chb09/chb09-summary.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb09/chb09-summary.txt"
+    },
+    {
+      "expected_bytes": 3605,
+      "expected_sha256": "f63fbc9359c894a81f92ed126f0b813eb3cfc279f9a17b068ed3680abc575353",
+      "kind": "summary",
+      "path": "chb10/chb10-summary.txt",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb10/chb10-summary.txt"
+    },
+    {
+      "expected_bytes": 42399744,
+      "expected_sha256": "0a04cd84c2e1ea5d656a77ec5b3700001c03737f74c5b78c47147e365a27b5f0",
+      "kind": "edf",
+      "path": "chb02/chb02_01.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb02/chb02_01.edf"
+    },
+    {
+      "expected_bytes": 11299328,
+      "expected_sha256": "b50345b4b7d35d2735e3d2fc5f7df3e39a60916a881a11f2cd40337e529ea3fa",
+      "kind": "edf",
+      "path": "chb02/chb02_16.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb02/chb02_16.edf"
+    },
+    {
+      "expected_bytes": 54,
+      "expected_sha256": "81db9912a0bf9d1e2020233336410d7ce71428cdc35cfa56465bc13b6f53404c",
+      "kind": "seizure_sidecar",
+      "path": "chb02/chb02_16.edf.seizures",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb02/chb02_16.edf.seizures"
+    },
+    {
+      "expected_bytes": 42517504,
+      "expected_sha256": "8840c7d7b32becffdc2ae35eff4c6e222bf15a23c28b0367005e9ece355daf4c",
+      "kind": "edf",
+      "path": "chb05/chb05_01.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb05/chb05_01.edf"
+    },
+    {
+      "expected_bytes": 42399744,
+      "expected_sha256": "8a15d8871289ff5947136c2bbd4482af9a9ac30d402efd3357993b064e86a2fd",
+      "kind": "edf",
+      "path": "chb05/chb05_06.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb05/chb05_06.edf"
+    },
+    {
+      "expected_bytes": 54,
+      "expected_sha256": "cd2b2a66aa3a786bdfab11ef3ea59abac6167a0d8cb2e1142554dfffa9c6aea0",
+      "kind": "seizure_sidecar",
+      "path": "chb05/chb05_06.edf.seizures",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb05/chb05_06.edf.seizures"
+    },
+    {
+      "expected_bytes": 42399744,
+      "expected_sha256": "f01c6435d6eed409cd25d3a590ee4d69b6c778adb48b9a7b50eae887ed50c9c7",
+      "kind": "edf",
+      "path": "chb08/chb08_02.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb08/chb08_02.edf"
+    },
+    {
+      "expected_bytes": 54,
+      "expected_sha256": "29b80339b2a6622ccf033fe750a40869b484fb4031be3e9dbe7c62794e999648",
+      "kind": "seizure_sidecar",
+      "path": "chb08/chb08_02.edf.seizures",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb08/chb08_02.edf.seizures"
+    },
+    {
+      "expected_bytes": 42399744,
+      "expected_sha256": "b8301e9e3f3cdf4b87547f8a08c0ac8650f52f79cf54d0434074a44ac09293fa",
+      "kind": "edf",
+      "path": "chb08/chb08_03.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb08/chb08_03.edf"
+    },
+    {
+      "expected_bytes": 94484992,
+      "expected_sha256": "b9efcbf7adadd15dae022ed2e49bd2222a76ea97556e9fa4ba1e9b62facbe399",
+      "kind": "edf",
+      "path": "chb09/chb09_01.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb09/chb09_01.edf"
+    },
+    {
+      "expected_bytes": 176941312,
+      "expected_sha256": "f6d2f0f08894f501be38ac396014c02e28163824c99a6c92baf5f6b25395a6aa",
+      "kind": "edf",
+      "path": "chb09/chb09_06.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb09/chb09_06.edf"
+    },
+    {
+      "expected_bytes": 54,
+      "expected_sha256": "2ba288579e30f1786dd52cae66a3e6ce42b3a085b03113f7eee27d0cc8256fc2",
+      "kind": "seizure_sidecar",
+      "path": "chb09/chb09_06.edf.seizures",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb09/chb09_06.edf.seizures"
+    },
+    {
+      "expected_bytes": 169898496,
+      "expected_sha256": "ce4499133ba1353546591eb6f47909f04f1670d61bfee8bcd7de56b9f648b5da",
+      "kind": "edf",
+      "path": "chb06/chb06_01.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb06/chb06_01.edf"
+    },
+    {
+      "expected_bytes": 86,
+      "expected_sha256": "533cd7d266a846ac28865a0c7afe9bda3577d4ce8a336f194a66c9132b794f6c",
+      "kind": "seizure_sidecar",
+      "path": "chb06/chb06_01.edf.seizures",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb06/chb06_01.edf.seizures"
+    },
+    {
+      "expected_bytes": 169580544,
+      "expected_sha256": "72bc993bbc64fd67908c23a2250f709ca4a108820096edc3f6329189ca0d7287",
+      "kind": "edf",
+      "path": "chb06/chb06_02.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb06/chb06_02.edf"
+    },
+    {
+      "expected_bytes": 85028864,
+      "expected_sha256": "217360eee85a7e6dc7ade9d7309c8cf09ae9314195c6cdeeafb5b95dcdf4ce14",
+      "kind": "edf",
+      "path": "chb10/chb10_01.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb10/chb10_01.edf"
+    },
+    {
+      "expected_bytes": 84793344,
+      "expected_sha256": "1ef27c219149ded4633a5ee1e8468d300a84f5f6881cd3a45cf2152e8b15c62d",
+      "kind": "edf",
+      "path": "chb10/chb10_12.edf",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb10/chb10_12.edf"
+    },
+    {
+      "expected_bytes": 54,
+      "expected_sha256": "2110bcd3ad691d8c03d46cf940afa9b41621c97d3c7093d222458c7095c0e699",
+      "kind": "seizure_sidecar",
+      "path": "chb10/chb10_12.edf.seizures",
+      "url": "https://physionet.org/files/chbmit/1.0.0/chb10/chb10_12.edf.seizures"
+    }
+  ],
+  "manifest_sha256": "dc81f5f555e098806ebe977a6e553eee314e7b66a897a5620f037d44e2b79bcd",
+  "note": "No network requests or filesystem writes are performed by plan.",
+  "planning_only": true,
+  "schema_version": "chbmit-staging-plan-v1",
+  "split": {
+    "alias_safeguard": [
+      "chb01",
+      "chb21"
+    ],
+    "test": [
+      "chb06",
+      "chb10"
+    ],
+    "train": [
+      "chb02",
+      "chb05",
+      "chb08"
+    ],
+    "validation": [
+      "chb09"
+    ]
+  },
+  "storage": {
+    "after_stage_bytes": 1004239275,
+    "cap_bytes": 5368709120,
+    "existing_bytes": 0,
+    "free_after_stage_bytes": 46216308309,
+    "free_bytes": 47220547584,
+    "minimum_free_bytes": 21474836480,
+    "planned_bytes": 1004239275,
+    "root": "/mnt/approved/neurosense/chbmit-pilot"
+  },
+  "total_bytes": 1004239275
+}

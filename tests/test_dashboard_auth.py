@@ -9,7 +9,8 @@ class DashboardAuthTests(unittest.TestCase):
     def test_dashboard_has_auth_navigation_and_theme(self):
         app = (ROOT / "dashboard" / "app.py").read_text(encoding="utf-8")
         css = (ROOT / "dashboard" / "static" / "neurosense.css").read_text(encoding="utf-8")
-        for label in ("Login", "Sign up", "Overview", "Live EEG", "Sessions", "Analytics", "Profile", "Log out"):
+        for label in ("Login", "Sign up", "Overview", "Live EEG", "EEG Seizure Research",
+                      "Sessions", "Analytics", "Profile", "Log out"):
             self.assertIn(label, app)
         for color in ("--ns-navy", "--ns-cyan", "--ns-violet"):
             self.assertIn(color, css)
