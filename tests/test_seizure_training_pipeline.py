@@ -25,12 +25,12 @@ from seizure_research.preprocessing import (
     ChannelMapping, make_age_config, preprocess_recording,
 )
 from seizure_research.quality import QualityThresholds
-from seizure_research.schemas import AgeGroup
+from seizure_research.schemas import AgeGroup, TimeInterval
 from seizure_research.splitting import build_explicit_split_manifest, digest, validate_split_manifest
 from seizure_research.training import (
     AnnotationEventEvidence, DiskBudget, FeatureTable, PilotRunConfig,
     RecordingAnnotationEvidence, patient_sample_weights, train_xgboost,
-    build_test_artifact_payloads, run_approved_pilot, main as training_main,
+    build_test_artifact_payloads, run_approved_pilot, evaluate_xgboost_test, main as training_main,
     validate_recording_annotation_evidence,
 )
 from seizure_research.waveform import EDFStreamReader
@@ -108,6 +108,60 @@ class SeizureFeatureTests(unittest.TestCase):
 
 
 class SeizureEventTests(unittest.TestCase):
+    def test_event_counts_latency_nonseizure_duration_and_recording_metrics(self):
+        from seizure_research.events import CandidateEvent
+        from seizure_research.multipatient import evaluation_details
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            recording = ingest_cohort(root, fixtures._fixture(root)).manifest.records[0].recording
+            second = recording.annotations[0].model_copy(update={
+                "event_id": "second", "start_seconds": 35.0, "end_seconds": 40.0})
+            quality = recording.quality.model_copy(update={"excluded_intervals": (
+                TimeInterval(start_seconds=45.0, end_seconds=50.0),)})
+            recording = recording.model_copy(update={"annotations": (*recording.annotations, second), "quality": quality})
+            windows = tuple(ScoredWindow(recording.recording_id, recording.patient_group_id,
+                                         float(i), float(i+5), .1, "test")
+                            for i in range(56) if i+5 <= 45 or i >= 50)
+            candidates = tuple(CandidateEvent(name, recording.recording_id, recording.patient_group_id,
+                                              start, end, trigger, (name,), 0)
+                               for name, start, end, trigger in (("hit", 10, 16, 12),
+                                                               ("duplicate", 10, 16, 13), ("false", 25, 29, 27)))
+            metrics = evaluate_events((recording,), windows, candidates)
+            self.assertEqual((metrics.reference_events, metrics.detected_events, metrics.missed_events), (2, 1, 1))
+            self.assertEqual(metrics.event_sensitivity, .5)
+            self.assertEqual(metrics.false_events, 2)
+            self.assertAlmostEqual(metrics.evaluable_hours, 36/3600)
+            self.assertAlmostEqual(metrics.false_alarms_per_hour, 200.0)
+            self.assertEqual(metrics.trigger_latencies_seconds, (2,))
+            self.assertEqual(metrics.median_detection_latency_seconds, 2)
+            self.assertEqual(metrics.per_patient[recording.patient_group_id].missed_event_ids, ("second",))
+            details = evaluation_details((recording,), windows, candidates)
+            self.assertEqual(details["per_recording"][recording.recording_id]["false_events"], 2)
+
+    def test_zero_denominators_and_algorithmic_abstention_are_explicit(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            recording = ingest_cohort(root, fixtures._fixture(root)).manifest.records[0].recording
+            missed = evaluate_events((recording,), (), ())
+            self.assertEqual((missed.reference_events, missed.missed_events, missed.event_sensitivity), (1, 1, 0))
+            empty = evaluate_events((recording.model_copy(update={"annotations": ()}),), (), ())
+            self.assertIsNone(empty.event_sensitivity)
+            self.assertIsNone(empty.false_alarms_per_hour)
+            self.assertIsNone(empty.median_detection_latency_seconds)
+
+    def test_unreviewed_and_excluded_intervals_cannot_be_scored(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            recording = ingest_cohort(root, fixtures._fixture(root)).manifest.records[0].recording
+            with self.assertRaisesRegex(ValueError, "Complete clinical annotation"):
+                evaluate_events((recording.model_copy(update={"annotation_coverage": "partial"}),), (), ())
+            quality = recording.quality.model_copy(update={"excluded_intervals": (
+                TimeInterval(start_seconds=45.0, end_seconds=50.0),)})
+            record = recording.model_copy(update={"quality": quality})
+            window = ScoredWindow(record.recording_id, record.patient_group_id, 45, 50, .5, "test")
+            with self.assertRaisesRegex(ValueError, "reviewed_exclusion"):
+                evaluate_events((record,), (window,), ())
+
     def test_validation_threshold_rejects_test_scores(self):
         bad = [ScoredWindow("r", "p", 0, 5, 0.8, split="test")]
         with self.assertRaisesRegex(ValueError, "validation_only"):
@@ -263,6 +317,11 @@ def _synthetic_table(split, patient, recording_id, rows=56):
 
 
 class SyntheticTrainingTests(unittest.TestCase):
+    def test_test_evaluation_rejects_changed_validation_threshold(self):
+        run = {"threshold": .8, "provenance": {"selected_validation_threshold": .5}}
+        with self.assertRaisesRegex(ValueError, "frozen_validation_selection"):
+            evaluate_xgboost_test(run, _synthetic_table("test", "p", "r"), recordings=(), split_manifest=None)
+
     def test_test_artifacts_bind_predictions_metrics_model_and_split(self):
         provenance = {"model_sha256": "a" * 64, "cohort_manifest_sha256": "b" * 64,
                       "split_manifest_sha256": "c" * 64, "validation_threshold": 0.5,

@@ -86,7 +86,12 @@ def status_fingerprint(*, archive_root: Path, approval_path: Path, review_path: 
             "model/xgboost.json", "model/provenance.json", "model/scaler.npz",
             "model/validation_selection.json", "test_predictions.json", "test_evaluation.json",
             "cohort_manifest.json", "split_manifest.json", "preprocessing.json",
-            "feature_manifest.json"))
+            "feature_manifest.json", "complete.json", "split_proposal.json",
+            "review_packet.json", "run_config.json", "test_freeze.json", "evaluation_details.json"))
+        # Every file bound by completion must invalidate cached validation,
+        # including feature shards and the completion marker arriving last.
+        if run_root.is_dir():
+            paths.extend(item for item in run_root.rglob("*") if item.is_file())
     if test_artifact:
         paths.append(test_artifact)
     return artifact_fingerprint(paths)

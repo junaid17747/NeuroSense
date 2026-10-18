@@ -21,11 +21,33 @@ from dashboard.seizure_lab import (
 )
 from dashboard.research_status import (clear_dashboard_status_cache,
                                        load_dashboard_snapshot,
+                                       status_fingerprint,
                                        validate_test_evaluation_artifact)
 from seizure_research.splitting import digest
 
 
 class SeizureLabTests(unittest.TestCase):
+    def test_completed_bundle_changes_invalidate_status_and_artifact_cache(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            run = root / "run"
+            run.mkdir()
+            def fingerprint():
+                return status_fingerprint(archive_root=root / "archive", approval_path=root / "approval",
+                                          review_path=root / "review", pilot_root=None, run_root=run,
+                                          test_artifact=None)
+            previous = fingerprint()
+            for relative in ("complete.json", "evaluation_details.json", "test_freeze.json", "split_proposal.json",
+                             "review_packet.json", "run_config.json", "features/test/test.parquet"):
+                path = run / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("TEST_ONLY")
+                current = fingerprint()
+                self.assertNotEqual(current, previous, relative)
+                previous = current
+            (run / "complete.json").unlink()
+            self.assertNotEqual(fingerprint(), previous)
+
     def test_empty_states_are_explicit_and_metrics_have_no_fake_values(self):
         states = lab_empty_states()
         self.assertIn("No approved real recordings", states["data"])

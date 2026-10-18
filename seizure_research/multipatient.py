@@ -330,7 +330,8 @@ def run_multipatient(root, temporary_root, inventory, selection, *, approval_pat
                                   "selection_sha256": selection["selection_sha256"],
                                   "split_proposal_sha256": proposal["split_proposal_sha256"],
                                   "feature_manifest_sha256": digest(feature_manifest),
-                                  "preprocessing_config_sha256": digest(preprocessing),
+                                  "preprocessing_config_sha256": digest({p: c.model_dump(mode="json")
+                                                                          for p, c in configs.items()}),
                                   "approval_record_sha256": digest(read_json(Path(approval_path))),
                                   "evaluation_details_sha256": digest(details),
                                   "age_specific_validation": False})

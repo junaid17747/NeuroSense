@@ -1,0 +1,140 @@
+{
+  "age_groups_missing_from_splits": {
+    "adolescent": [
+      "validation",
+      "test"
+    ],
+    "adult": [
+      "validation"
+    ]
+  },
+  "algorithm": "sha256-json-seed-patient-v1",
+  "alias_policy": "chb01 and chb21 share canonical person chb01",
+  "all_selected_recordings_accounted_for": true,
+  "audit_sha256": "f91beb061010882ba3c8851198a9073177e46c0897b409778d5df0d731c9928b",
+  "candidate_classes_in_each_split": true,
+  "canonical_patient_disjoint": true,
+  "distribution": {
+    "test": {
+      "background_candidates": 6,
+      "declared_events_unreviewed": 7,
+      "patients": [
+        "chb06",
+        "chb11",
+        "chb12",
+        "chb16",
+        "chb19",
+        "chb23"
+      ],
+      "patients_by_published_age": {
+        "adult": 1,
+        "child": 5
+      },
+      "positive_candidates": 6,
+      "recordings": 12,
+      "recordings_by_published_age": {
+        "adult": 2,
+        "child": 10
+      }
+    },
+    "train": {
+      "background_candidates": 12,
+      "declared_events_unreviewed": 14,
+      "patients": [
+        "chb01",
+        "chb03",
+        "chb04",
+        "chb05",
+        "chb07",
+        "chb08",
+        "chb09",
+        "chb13",
+        "chb14",
+        "chb15",
+        "chb17",
+        "chb18",
+        "chb24"
+      ],
+      "patients_by_published_age": {
+        "adolescent": 3,
+        "adult": 2,
+        "child": 7,
+        "unknown": 1
+      },
+      "positive_candidates": 13,
+      "recordings": 25,
+      "recordings_by_published_age": {
+        "adolescent": 6,
+        "adult": 4,
+        "child": 14,
+        "unknown": 1
+      }
+    },
+    "validation": {
+      "background_candidates": 4,
+      "declared_events_unreviewed": 4,
+      "patients": [
+        "chb02",
+        "chb10",
+        "chb20",
+        "chb22"
+      ],
+      "patients_by_published_age": {
+        "child": 4
+      },
+      "positive_candidates": 4,
+      "recordings": 8,
+      "recordings_by_published_age": {
+        "child": 8
+      }
+    }
+  },
+  "inventory_sha256": "ec686dddc0d49f5c39e1922b4b6f91e4e5572c31ffbd0b54016ef86c31267c85",
+  "limitations": [
+    "Candidate class coverage does not establish reviewed labels or scientific adequacy.",
+    "Age coverage is uneven; no age-specific validation is established. Do not redraw using test outcomes.",
+    "Unknown published age must be explicitly excluded from the current training profile, never imputed.",
+    "Summary channel names do not establish EDF index, polarity, units, rate or signal quality; duplicate labels need index review.",
+    "Recheck class and patient coverage after human exclusions, keeping original patient membership.",
+    "Small prospective event counts and limited background duration constrain generalization and false-alarm estimates."
+  ],
+  "montage": {
+    "edf_headers_reviewed": false,
+    "human_channel_review_complete": false,
+    "missing_channels": {},
+    "required_channels": [
+      "FP1-F7",
+      "F7-T7",
+      "T7-P7",
+      "P7-O1",
+      "FP1-F3",
+      "F3-C3",
+      "C3-P3",
+      "P3-O1",
+      "FP2-F4",
+      "F4-C4",
+      "C4-P4",
+      "P4-O2",
+      "FP2-F8",
+      "F8-T8",
+      "T8-P8",
+      "P8-O2",
+      "FZ-CZ",
+      "CZ-PZ"
+    ],
+    "summary_compatible_recordings": 45
+  },
+  "schema_version": "chbmit-proposed-split-audit-v1",
+  "scientific_adequacy_established": false,
+  "seed": 42,
+  "selected_canonical_patient_count": 23,
+  "selected_case_count": 23,
+  "selection_sha256": "87defcecf646bbd876a27178dc771a036e4396edd7d010e791891bbd48affa53",
+  "source_hashes_preserved": true,
+  "split_proposal_sha256": "40ddf35ff39f34a15d7f8e36924df2ed9ae7ca06610dd03869288287c9592404",
+  "status": "proposed_not_approved_for_training",
+  "training_authorized": false,
+  "unknown_age_patients": [
+    "chb24"
+  ]
+}

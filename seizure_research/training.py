@@ -494,6 +494,8 @@ def evaluate_xgboost_test(
     """Evaluate one frozen validation-selected model on test patients."""
     if test.split != "test":
         raise ValueError("frozen_test_evaluator_requires_test_partition")
+    if run["threshold"] != run["provenance"]["selected_validation_threshold"]:
+        raise ValueError("test_threshold_differs_from_frozen_validation_selection")
     if test.feature_names != run["provenance"]["feature_names"]:
         raise ValueError("test_feature_schema_mismatch")
     assignments = {item.recording_id: item for item in split_manifest.assignments}

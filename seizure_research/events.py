@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from statistics import mean, median
 from typing import Iterable, Mapping, Sequence
 
-from .schemas import EEGRecording, TimeInterval, overlaps
+from .schemas import EEGRecording, TimeInterval, overlaps, require_research_ready
 
 
 @dataclass(frozen=True)
@@ -218,6 +218,8 @@ def evaluate_events(recordings: Iterable[EEGRecording], windows: Sequence[Scored
     by_id = {item.recording_id: item for item in records}
     if len(by_id) != len(records) or not records:
         raise ValueError("evaluation_recording_inventory_invalid")
+    for rec in records:
+        require_research_ready(rec)
     if {item.recording_id for item in windows} - set(by_id):
         raise ValueError("evaluation_window_recording_unknown")
     if {item.recording_id for item in candidates} - set(by_id):
@@ -226,8 +228,14 @@ def evaluate_events(recordings: Iterable[EEGRecording], windows: Sequence[Scored
     candidate_ids: set[tuple[str, str]] = set()
     for item in candidates:
         rec = by_id[item.recording_id]
-        if item.patient_group_id != rec.patient_group_id or item.end_seconds < item.start_seconds:
+        if (item.patient_group_id != rec.patient_group_id
+                or not all(math.isfinite(v) for v in (item.start_seconds, item.end_seconds, item.trigger_seconds))
+                or not 0 <= item.start_seconds < item.end_seconds <= rec.duration_seconds
+                or not 0 <= item.trigger_seconds <= rec.duration_seconds):
             raise ValueError("candidate_identity_or_interval_invalid")
+        interval = TimeInterval(start_seconds=item.start_seconds, end_seconds=item.end_seconds)
+        if any(overlaps(interval, gap) for gap in rec.quality.excluded_intervals):
+            raise ValueError("candidate_overlaps_reviewed_exclusion")
         key = (item.recording_id, item.event_id)
         if key in candidate_ids:
             raise ValueError("duplicate_candidate_event_id")
@@ -236,8 +244,17 @@ def evaluate_events(recordings: Iterable[EEGRecording], windows: Sequence[Scored
     grouped_windows: dict[str, list[ScoredWindow]] = defaultdict(list)
     window_keys: set[tuple[str, float, float]] = set()
     for item in windows:
-        if item.patient_group_id != by_id[item.recording_id].patient_group_id:
+        rec = by_id[item.recording_id]
+        if item.patient_group_id != rec.patient_group_id:
             raise ValueError("window_patient_identity_conflict")
+        if (not all(math.isfinite(v) for v in (item.start_seconds, item.end_seconds))
+                or not 0 <= item.start_seconds < item.end_seconds <= rec.duration_seconds
+                or (item.probability is not None and
+                    (not math.isfinite(item.probability) or not 0 <= item.probability <= 1))):
+            raise ValueError("evaluation_window_invalid")
+        interval = TimeInterval(start_seconds=item.start_seconds, end_seconds=item.end_seconds)
+        if item.probability is not None and any(overlaps(interval, gap) for gap in rec.quality.excluded_intervals):
+            raise ValueError("scored_window_overlaps_reviewed_exclusion")
         key = (item.recording_id, item.start_seconds, item.end_seconds)
         if key in window_keys:
             raise ValueError("duplicate_scored_window")

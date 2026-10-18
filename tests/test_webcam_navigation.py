@@ -105,6 +105,18 @@ class WebcamNavigationTests(unittest.TestCase):
         self.assertFalse(any("Synthetic display duration" in item.label for item in self.app.slider))
         self.assertTrue(any(button.key == "seizure_status_refresh" for button in self.app.button))
         self.assertFalse(self.app.get("bidi_component"))
+        elements = list(self.app.main)
+        chart = self.app.get("vega_lite_chart")[0]
+        status = next(item for item in self.app.markdown if "**Research status:**" in item.value)
+        details = self.app.expander[0]
+        self.assertEqual(details.label, "Research Details")
+        self.assertFalse(details.proto.expanded)
+        self.assertEqual(len(self.app.metric), 4)
+        self.assertLess(elements.index(self.app.title[0]), elements.index(chart))
+        for card in self.app.metric:
+            self.assertLess(elements.index(chart), elements.index(card))
+            self.assertLess(elements.index(card), elements.index(status))
+        self.assertLess(elements.index(status), elements.index(details))
 
     def test_sidebar_can_open_webcam_page(self):
         self.sign_in()

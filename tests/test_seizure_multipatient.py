@@ -12,7 +12,8 @@ from seizure_research.adapters.chb_mit import parse_summary
 from seizure_research.annotation_review import build_review_packet, seal_review_packet, parse_seizure_sidecar
 from seizure_research.archive import ArchiveApproval, run_archive, read_json
 from seizure_research.archive_selection import select_cohort
-from seizure_research.cohort import proposed_split, validate_proposed_split, annotation_investigation
+from seizure_research.cohort import (proposed_split, validate_proposed_split, annotation_investigation,
+                                     audit_proposed_split)
 from seizure_research.ingestion import normalized_plan
 from seizure_research.inventory import build_inventory
 from seizure_research.multipatient import (DEFAULT_RUN, run_multipatient, validate_review_inputs,
@@ -30,7 +31,7 @@ def annotation_bytes(start=30, end=40):
 
 
 class SyntheticArchive:
-    def __init__(self, base):
+    def __init__(self, base, *, sidecar_start=30):
         self.base = base
         pilot = SyntheticPilot(base)
         self.plan = copy.deepcopy(pilot.plan)
@@ -39,7 +40,7 @@ class SyntheticArchive:
         self.payloads = dict(pilot.payloads)
         for path in list(self.payloads):
             if path.endswith(".seizures"):
-                self.payloads[path] = annotation_bytes()
+                self.payloads[path] = annotation_bytes(start=sidecar_start)
         cases = sorted({item["subject_id"] for item in self.plan["recordings"]})
         edfs = sorted(p for p in self.payloads if p.endswith(".edf"))
         self.payloads.update({
@@ -143,6 +144,58 @@ class MultipatientTests(unittest.TestCase):
         self.assertEqual(len(report["issues"]),12)
         self.assertEqual(len(report["background_candidates"]),22)
         self.assertFalse(any(r["resolved_by_public_metadata"] for r in report["issues"]))
+        self.assertTrue(all(r["human_review_required"] and r["human_review_evidence"] is None
+                            and r["machine_interpretation"] for r in report["issues"]))
+        conflict = next(r for r in report["issues"] if r["path"] == "chb07/chb07_19.edf")
+        self.assertTrue(conflict["sidecar_url"].endswith("chb07_19.edf.seizures"))
+        audit = audit_proposed_split(i, s, p)
+        self.assertEqual(audit, audit_proposed_split(i, s, json.loads(json.dumps(p, sort_keys=True))))
+        self.assertTrue(audit["candidate_classes_in_each_split"])
+        self.assertEqual(audit["unknown_age_patients"], ["chb24"])
+        self.assertEqual(audit["montage"]["summary_compatible_recordings"], 45)
+        self.assertFalse(audit["scientific_adequacy_established"])
+        self.assertEqual(audit["age_groups_missing_from_splits"],
+                         {"adolescent": ["validation", "test"], "adult": ["validation"]})
+        self.assertEqual([(p["distribution"][n]["positive_candidates"],
+                           p["distribution"][n]["background_candidates"])
+                          for n in ("train", "validation", "test")], [(13, 12), (4, 4), (6, 6)])
+
+    def test_unverified_background_and_incompatible_montage_are_rejected(self):
+        with tempfile.TemporaryDirectory(prefix="neurosense-GATES-TEST_ONLY-") as d, synthetic_environment():
+            fixture = SyntheticArchive(Path(d))
+            packet = copy.deepcopy(fixture.packet)
+            next(r for r in packet["recordings"] if not r["summary_declared_event_count"])["verified_seizure_free"] = False
+            with self.assertRaisesRegex(PermissionError, "annotation_review"):
+                validate_review_inputs(fixture.inventory, fixture.selection, fixture.proposal,
+                                       fixture.plan, seal_review_packet(packet), fixture.configs)
+            configs = copy.deepcopy(fixture.configs)
+            configs[next(iter(configs))]["channels"][0]["target_label"] = "UNREVIEWED"
+            with self.assertRaisesRegex(ValueError, "montage_mismatch"):
+                validate_review_inputs(fixture.inventory, fixture.selection, fixture.proposal,
+                                       fixture.plan, fixture.packet, configs)
+
+    def test_missing_published_age_is_not_imputed_from_review_plan(self):
+        with tempfile.TemporaryDirectory(prefix="neurosense-AGE-TEST_ONLY-") as d, synthetic_environment():
+            fixture = SyntheticArchive(Path(d))
+            inventory = copy.deepcopy(fixture.inventory)
+            inventory["recordings"][0]["age"] = None
+            inventory["inventory_sha256"] = digest({k: v for k, v in inventory.items() if k != "inventory_sha256"})
+            selection = select_cohort(inventory)
+            proposal = proposed_split(inventory, selection)
+            packet = {**fixture.packet, "inventory_sha256": inventory["inventory_sha256"],
+                      "selection_sha256": selection["selection_sha256"]}
+            with self.assertRaisesRegex(ValueError, "unknown_published_age"):
+                validate_review_inputs(inventory, selection, proposal, fixture.plan,
+                                       seal_review_packet(packet), fixture.configs)
+
+    def test_checksum_valid_but_conflicting_sidecar_blocks_training(self):
+        with tempfile.TemporaryDirectory(prefix="neurosense-SIDECAR-TEST_ONLY-") as d, synthetic_environment():
+            fixture = SyntheticArchive(Path(d), sidecar_start=31)
+            self.assertEqual(fixture.stage()["status"], "complete_verified")
+            with patch("seizure_research.multipatient.train_xgboost",
+                       side_effect=AssertionError("conflicting annotations reached training")):
+                with self.assertRaisesRegex(ValueError, "sidecar_summary_event_disagreement"):
+                    fixture.run()
 
     def test_summary_target_keeps_strict_annotation_checks(self):
         cache=PROJECT/"reports/checkpoint_d7/source_metadata"
@@ -183,7 +236,17 @@ class MultipatientTests(unittest.TestCase):
                 approval=copy.deepcopy(fixture.approval);approval["training_status"]="pending"
                 write_json(fixture.approval_path,approval)
                 with self.assertRaisesRegex(PermissionError,"training_authorization"):fixture.run()
+                approval=copy.deepcopy(fixture.approval);approval["processing_status"]="pending"
+                write_json(fixture.approval_path,approval)
+                with self.assertRaises(PermissionError):fixture.run()
+                approval=copy.deepcopy(fixture.approval);approval["training_split_sha256"]="0"*64
+                write_json(fixture.approval_path,approval)
+                with self.assertRaisesRegex(PermissionError,"input_binding"):fixture.run()
                 write_json(fixture.approval_path,fixture.approval)
+            # Omitting a default must retain the authorized effective profile
+            # and produce a bundle that its own loader can validate.
+            for config in fixture.configs.values():
+                self.assertEqual(config.pop("filter_order"), 4)
             result=fixture.run()
             self.assertEqual(result["status"],"complete")
             run=Path(result["run_dir"])
